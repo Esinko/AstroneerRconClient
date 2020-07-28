@@ -482,7 +482,7 @@ const socket = class Net {
     }
 }
 //Development stuff, ignore for now
-//Documentation will soon
+//Documentation will come soon
 let rcon = new socket("#", 1234)
 
 rcon.connect().then(async session => {
