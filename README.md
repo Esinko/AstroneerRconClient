@@ -13,15 +13,15 @@ const Client = new AstroneerRconClient("127.0.0.1", 1234)
 
 Client.connect().then(async server => {
   	console.log("Connected to the server!")
-        //Issue commands here
-        //Example, Get the current players:
-        server.getPlayers().then(async response => {
-            console.log(response)
-            Client.close().then(async () => {
-                console.log("Connection to server closed.")
-            }).catch(async error => {
-                console.log(error)
-            })
+    //Issue commands here
+    //Example, Get the current players:
+    server.getPlayers().then(async response => {
+        console.log(response)
+        Client.close().then(async () => {
+            console.log("Connection to server closed.")
+        }).catch(async error => {
+            console.log(error)
+        })
     }).catch(async error => {
         console.log(error)
     })
