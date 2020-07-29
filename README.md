@@ -14,6 +14,7 @@ rcon = Remote command execution
 Get a server running and add ``ConsolePort=\[port, like 2000]`` to the ``AstroServerSettings.ini`` file. This will be the port for the client to use.
 
 **WARNING: DO NOT OPEN THE CONSOLEPORT TO THE PUBLIC. IT WILL GRANT ACCESS TO YOUR SERVER TO ANYONE!!!**
+
 Note: This does not work if you are already running AstroLauncher with rcon enabled (at this time you cannot disable AstroLauncher rcon)
 
 # Quickstart
