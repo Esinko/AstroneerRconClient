@@ -7,7 +7,8 @@ server = The dedicated self-hosted Astroneer server
 client = The software iusing a net-socket connection to the server(read above)
 
 # Quickstart
-``const AstroneerRconClient = require("index.js")
+```
+const AstroneerRconClient = require("index.js")
 const Client = new AstroneerRconClient("127.0.0.1", 1234)
 
 Client.connect().then(async server => {
@@ -26,16 +27,19 @@ Client.connect().then(async server => {
     })
 }).catch(async error => {
   console.log(error)
-})``
+})
+```
 
 # Commands
 The list of commands(functions) in the "session" class (returned by connect function, known as "server" in the quickstart).
 All commands follow this syntax:
-``\[server].\[commandName](\[optional parameter]).then(async \[anyResponseVariableName] => {
+```
+\[server].\[commandName](\[optional parameter]).then(async \[anyResponseVariableName] => {
     \[code after server responded, read response from above anyResponseVariableName]
 }).catch(async [anyErrorvariableName] => {
     \[code ran when error occured, error details from above anyErrorVariableName]
-})``
+})
+```
 This syntax is pretty much a standard Node.JS promise.
 Commands list:
 - .getPlayers()
