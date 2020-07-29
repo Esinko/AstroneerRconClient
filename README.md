@@ -68,9 +68,11 @@ Commands list:
 Events are available in \[server].events
 
 For example if you want to run code when a user joins do this:
-``[client].events.on("playerJoined", async player => {
+```
+[client].events.on("playerJoined", async player => {
     console.log(player.playerName + " just joined the game!")
-})``
+})
+```
 
 List of events:
 - connecting
