@@ -20,7 +20,7 @@ Client.connect().then(async server => {
             Client.close().then(async () => {
                 console.log("Connection to server closed.")
             }).catch(async error => {
-                console.log(error]
+                console.log(error)
             })
     }).catch(async error => {
         console.log(error)
