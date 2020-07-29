@@ -12,7 +12,7 @@ const AstroneerRconClient = require("index.js")
 const Client = new AstroneerRconClient("127.0.0.1", 1234)
 
 Client.connect().then(async server => {
-  	console.log("Connected to the server!")
+    console.log("Connected to the server!")
     //Issue commands here
     //Example, Get the current players:
     server.getPlayers().then(async response => {
