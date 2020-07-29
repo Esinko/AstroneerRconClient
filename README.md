@@ -6,7 +6,7 @@ guid = A user specific unique id
 
 server = The dedicated self-hosted Astroneer server
 
-client = The software iusing a net-socket connection to the server(read above)
+client = The software(this software) using a net-socket connection to the server(read above)
 
 # Quickstart
 ```
