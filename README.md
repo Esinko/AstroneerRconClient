@@ -1,7 +1,7 @@
 # AstroneerRconClient
 A client for the Astroneer Rcon server built with Node.Js
 
-# Defenitions of document specific words
+# Definitions of document specific words
 guid = A user specific unique id
 server = The dedicated self-hosted Astroneer server
 client = The software iusing a net-socket connection to the server(read above)
@@ -94,7 +94,7 @@ List of events:
 - playerLeft
     - A player left the server (playerObject in event)
 # Client functions
-All of these functions return a promise (same syntax as in commands)
+All of these functions return a promise (same syntax as in commands).
 - .connect()
     - Connect to the server
 - .close()
