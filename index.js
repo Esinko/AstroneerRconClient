@@ -1,17 +1,20 @@
 //Require
-const cp = require("child_process")
 const net = require("net")
 const events = require("events")
 
 //Config
 const prefix = "DS" //This is the RCON prefix that appears in the start of every sent command
 
-//Memory
+//Memory and presets
 const portRegex = /^([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$/g
 const ipRegex = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/g
 const categories = ["unlisted", "blacklisted", "whitelisted", "admin"]
 
 //Classes
+/**
+ * The parser class
+ * @param {*} data Data to parse
+ */
 const Parser = class Parser {
     constructor(data){
         this.data = data
@@ -23,12 +26,19 @@ const Parser = class Parser {
                 resolve(this.data)
             }
             catch(err){
-                console.log(new Buffer.from(this.data).toString())
+                //console.log(new Buffer.from(this.data).toString())
                 reject(err)
             }
         })
     }
 }
+/**
+ * The commands class
+ * @param {Socket} client The socket client
+ * @param {EventEmitter} events Socket class event emitter
+ * @param {*} _ Socket class settings / memory
+ * @param {*} self Socket class
+ */
 const command = class Command {
     constructor(client, events, _, self){
         this.client = client
@@ -37,7 +47,10 @@ const command = class Command {
         this.send = self.send
         this.self = self
     }
-    
+    /**
+     * Get a list of players in the server.
+     * @returns Promise
+     */
     async getPlayers(){
         return new Promise(async (resolve, reject) => {
             this.send("ListPlayers").then(async data => {
@@ -53,6 +66,11 @@ const command = class Command {
         })
     }
 
+    /**
+     * Kick a player from the server
+     * @param {{name: "", guid: ""}} options Json object with either a guid or name field
+     * @returns Promise
+     */
     async kickPlayer(options){
         return new Promise(async (resolve, reject) => {
             if(options.name != undefined){
@@ -109,6 +127,9 @@ const command = class Command {
         })
     }
 
+    /**
+     * Get a list of the save games available
+     */
     async getSavegames(){
         return new Promise(async (resolve, reject) => {
             this.send("ListGames").then(async data => {
@@ -124,6 +145,11 @@ const command = class Command {
         })
     }
 
+    /**
+     * Load a savegame by name
+     * @param {""} name The name of the save
+     * @returns Promise
+     */
     async loadSavegame(name){
         return new Promise(async (resolve, reject) => {
             if(name == undefined || typeof name != "string" || name.length == 0){
@@ -145,6 +171,9 @@ const command = class Command {
         })
     }
 
+    /**
+     * Save the game in the server
+     */
     async save(){
         return new Promise(async (resolve, reject) => {
             this.send("SaveGame").then(async data => {
@@ -159,7 +188,11 @@ const command = class Command {
             })
         })
     }
-
+    
+    /**
+     * Shutdown the server, don't forget to save first!
+     * @returns Promise
+     */
     async shutdown(){
         return new Promise(async (resolve, reject) => {
             this.send("ServerShutdown").then(async data => {
@@ -175,6 +208,10 @@ const command = class Command {
         })
     }
 
+    /**
+     * Get information about the server
+     * @returns Promise
+     */
     async getStatistics(){
         return new Promise(async (resolve, reject) => {
             this.send("ServerStatistics").then(async data => {
@@ -190,6 +227,10 @@ const command = class Command {
         })
     }
 
+    /**
+     * Enable or disable the whitelist
+     * @param {false | true} boolean The state boolean, true=on false=off
+     */
     async setWhitelist(boolean){
         return new Promise(async (resolve, reject) => {
             if(typeof boolean == "boolean"){
@@ -208,6 +249,12 @@ const command = class Command {
         })
     }
 
+    /**
+     * Set a player category. 
+     * @param {""} name 
+     * @param {"admin" | "whitelisted" | "unlisted" | "blacklisted"} category The category to add. Unlisted is the same as none, whitelisted allows the user to bypass the whitelist, blacklisted is the same as banned and admin allows for all permissions.
+     * @returns Promise 
+     */
     async setPlayerCategory(name, category){
         return new Promise(async (resolve, reject) => {
             if(categories.includes(category)){
@@ -227,6 +274,11 @@ const command = class Command {
         })
     }
     
+    /**
+     * Create a new save by name
+     * @param {""} name The name of the save
+     * @returns Promise
+     */
     async createNewSave(name){
         return new Promise(async (resolve, reject) => {
             if(name == undefined || typeof name != "string" || name.length == 0){
@@ -246,8 +298,16 @@ const command = class Command {
         })
     }
 
+    /**
+     * UNKOWN, EXPERIMENTAL
+     * @param {*} index UNKOWN. If given 0 or 1 all players will lose connection.
+     */
     async travel(index){
         return new Promise(async (resolve, reject) => {
+            if(self._.experimental == false) {
+                reject("Experimental commands are disabled. Enable with [command-class]._.experimental = true.")
+                return
+            }
             console.warn("The travel command is experimental and should not be used!")
             this.send("Travel " + index).then(async data => {
                 let parser = new Parser(data)
@@ -280,7 +340,10 @@ const socket = class Net {
         this.events = new events.EventEmitter()
         this.events.setMaxListeners(32) //Handle for queues
     }   
-
+    /**
+     * Connect to the server
+     * @returns Promise
+     */
     async connect(){
         return new Promise(async (resolve, reject) => {
             if(this._.client == null){
@@ -373,7 +436,6 @@ const socket = class Net {
                             }, 10000)
                         })
                         client.on("data", async data => {
-                            console.log("Got data")
                             this.events.emit("data", data)
                         })
                         client.on("close", async () => {
@@ -403,10 +465,19 @@ const socket = class Net {
             }
         })
     }
+    /**
+     * Send data to the server. This should only be used internally.
+     * @param {*} data 
+     * @returns Promise
+     */
     async send(data){
         return new Promise(async (resolve, reject) => {
             //Two contexts here require special handling
             if(this.genid == undefined){
+                if(this.self._.queue.length > 31){
+                    reject("The request queue is full. Check connections are goind through.")
+                    return;
+                }
                 this.self.genid(10).then(async id => {
                     this.self._.queue.push({data: data, id: id})
                     let self = this.self
@@ -427,6 +498,10 @@ const socket = class Net {
                     reject(err)
                 })
             }else{
+                if(this._.queue.length > 31){
+                    reject("The request queue is full. Check connections are goind through.")
+                    return;
+                }
                 this.genid(10).then(async id => {
                     this._.queue.push({data: data, id: id})
                     let self = this
@@ -449,6 +524,11 @@ const socket = class Net {
             }
         })
     }
+    /**
+     * Generate a (semi)random string. This should only be used internally.
+     * @param {*} length The lenght of the (semi)random string
+     * @returns Promise
+     */
     async genid(length){
         return new Promise(async (resolve, reject) => {
             try {
@@ -465,6 +545,10 @@ const socket = class Net {
             }
         })
     }
+    /**
+     * Close the connection with the server
+     * @returns Promise
+     */
     async close(){
         return new Promise(async (resolve, reject) => {
             if(this._.client != null){
@@ -481,35 +565,4 @@ const socket = class Net {
         })
     }
 }
-//Development stuff, ignore for now
-//Documentation will come soon
-let rcon = new socket("#", 1234)
-
-rcon.connect().then(async session => {
-    console.log("Now ready to send commands")
-    session.setPlayerCategory("Esinko", "admin").then(async data => {
-        console.log(data)
-    }).catch(async err => {
-        console.log(err)
-    })
-}).catch(async error => {
-    console.log(error)
-})
-rcon.events.on("connecting", async () => {
-    console.log("Connecting")
-})
-rcon.events.on("connected", async () => {
-    console.log("Connected")
-})
-rcon.events.on("close", async () => {
-    console.log("Connection closed")
-})
-rcon.events.on("error", async (err) => {
-    console.log(err)
-})
-rcon.events.on("playerJoined", async player => {
-    console.log("Playerjoined", player)
-})
-rcon.events.on("playerLeft", async player => {
-    console.log("Playerleft", player)
-})
+module.exports = socket
