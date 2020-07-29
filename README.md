@@ -11,7 +11,7 @@ client = The software(this software) using a net-socket connection to the server
 rcon = Remote command execution
 
 # Setup
-Get a server running and add ``ConsolePort=\[port, like 2000]`` to the ``AstroServerSettings.ini`` file. This will be the port for the client to use.
+Get a server running and add ``ConsolePort=[port, like 2000]`` to the ``AstroServerSettings.ini`` file. This will be the port for the client to use.
 
 **WARNING: DO NOT OPEN THE CONSOLEPORT TO THE PUBLIC. IT WILL GRANT ACCESS TO YOUR SERVER TO ANYONE!!!**
 
