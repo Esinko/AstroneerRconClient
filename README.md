@@ -13,15 +13,15 @@ const Client = new AstroneerRconClient("127.0.0.1", 1234)
 
 Client.connect().then(async server => {
   	console.log("Connected to the server!")
-    //Issue commands here
-    //Example, Get the current players:
-    server.getPlayers().then(async response => {
-        console.log(response)
-        Client.close().then(async () => {
-            console.log("Connection to server closed.")
-        }).catch(async error => {
-            console.log(error]
-        })
+        //Issue commands here
+        //Example, Get the current players:
+        server.getPlayers().then(async response => {
+            console.log(response)
+            Client.close().then(async () => {
+                console.log("Connection to server closed.")
+            }).catch(async error => {
+                console.log(error]
+            })
     }).catch(async error => {
         console.log(error)
     })
@@ -32,15 +32,17 @@ Client.connect().then(async server => {
 
 # Commands
 The list of commands(functions) in the "session" class (returned by connect function, known as "server" in the quickstart).
+
 All commands follow this syntax:
 ```
-\[server].\[commandName](\[optional parameter]).then(async \[anyResponseVariableName] => {
-    \[code after server responded, read response from above anyResponseVariableName]
+[server].[commandName]([optional parameter]).then(async [anyResponseVariableName] => {
+    [code after server responded, read response from above anyResponseVariableName]
 }).catch(async [anyErrorvariableName] => {
-    \[code ran when error occured, error details from above anyErrorVariableName]
+    [code ran when error occured, error details from above anyErrorVariableName]
 })
 ```
 This syntax is pretty much a standard Node.JS promise.
+
 Commands list:
 - .getPlayers()
     - Get the list of players
@@ -64,10 +66,12 @@ Commands list:
     - Create a new savegame by name
 # Events
 Events are available in \[server].events
+
 For example if you want to run code when a user joins do this:
 ``[client].events.on("playerJoined", async player => {
     console.log(player.playerName + " just joined the game!")
 })``
+
 List of events:
 - connecting
     - The client is connecting to the server
@@ -90,6 +94,7 @@ List of events:
 - playerLeft
     - A player left the server (playerObject in event)
 # Client functions
+All of these functions return a promise (same syntax as in commands)
 - .connect()
     - Connect to the server
 - .close()
