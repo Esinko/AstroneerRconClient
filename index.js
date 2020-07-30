@@ -155,8 +155,7 @@ const command = class Command {
             if(name == undefined || typeof name != "string" || name.length == 0){
                 reject("The name value must be a string and not empty")
             }else {
-                reject("Not tested")
-                return;
+                //THIS IS NOT TESTED!!! The response may not need parsing at all.
                 this.send("LoadGame " + name).then(async data => {
                     let parser = new Parser(data)
                     parser.parse().then(async data => {
