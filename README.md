@@ -42,7 +42,7 @@ Client.connect().then(async server => {
 ```
 
 # Commands
-The list of commands(functions) in the "session" class (returned by connect function, known as "server" in the quickstart).
+The list of commands(functions) in the "session" class (returned by the connect function, known as "server" in the quickstart).
 
 All commands follow this syntax:
 ```
