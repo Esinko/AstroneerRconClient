@@ -474,7 +474,7 @@ const socket = class Net {
             //Two contexts here require special handling
             if(this.genid == undefined){
                 if(this.self._.queue.length > 31){
-                    reject("The request queue is full. Check connections are goind through.")
+                    reject("The request queue is full. Check connections are going through.")
                     return;
                 }
                 this.self.genid(10).then(async id => {
