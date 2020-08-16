@@ -556,7 +556,7 @@ const socket = class Net {
                     resolve()
                 }
                 catch(err){
-
+                    reject(err)
                 }
             }else {
                 reject("The connection is already closed or has been never opened.")
