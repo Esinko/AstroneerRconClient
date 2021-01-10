@@ -9,10 +9,10 @@ A client for the Astroneer Rcon server built with Node.Js
 <dl>
 <dt><a href="#Usage">Usage</a></dt>
 <dd><p>The documentation of this library. If you want to know how to use this libary, start here!</p></dd>
-<dd><a href="#Main-class">Quickstart</a></dd>
+<dd><a href="#Quickstart">Quickstart</a></dd>
 <dd><a href="#Type-defenitions">Type defenitions</a></dd>
 <dd><a href="#Client-class">Client class</a></dd>
-<dd><a href="#AstroLauncher-Link">AstroLauncher Link class</a></dd>
+<dd><a href="#AstroLauncher-Link-class">AstroLauncher Link class</a></dd>
 <dd><a href="#Errors-and-bugs">Errors and Bugs</a></dd>
 </dl>
 
@@ -511,7 +511,7 @@ Instead of taking the server port, ip and console password. It want's the ip, po
 <br>
 Please note, that some features of rcon that are yet to be implemented in AstroLauncher's api, will of course not be usable.
 
-# Errors-and -ugs
+# Errors-and-bugs
 Error handling is very important. In this libary all errors are handeled with the "error" event. If this event has no listeners, the error will be thrown in to global scope.
 <br>
 If you encounter any bugs, or anything unexpected. Don't hesitate to create a <a href="https://github.com/Esinko/AstroneerRconClient/issues/new">new issue</a>.
