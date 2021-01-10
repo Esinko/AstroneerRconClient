@@ -270,7 +270,7 @@ This is the constructor, which is in this case used to configure the client and 
 constructor(options){...}
 ```
 
-The options object is an instace of [ClientOptions](ClientOptions). Look in the Type defenitions section for more details.
+The options object is an instace of [ClientOptions](#ClientOptions). Look in the Type defenitions section for more details.
 <br>
 
 ## Internal variables
@@ -323,7 +323,7 @@ let list = await <instance>.listPlayers()
 // "list" will be the known players list
 ```
 
-### .getPlayer(player: [PlayerQuery](PlayerQuery))
+### .getPlayer(player: [PlayerQuery](#PlayerQuery))
 <b>Use:</b> Get information about a specific player<br>
 <b>Returns:</b> Promise<Object|Array><br>
 <b>Triggers events:</b> none<br>
@@ -335,7 +335,7 @@ let myPlayer = await <instance>.getPlayer({ guid: "<SomePlayerGuid>" })
 // an array with all matches.
 ```
 
-### .kick(player: [PlayerQuery](PlayerQuery))
+### .kick(player: [PlayerQuery](#PlayerQuery))
 <b>Use:</b> Kick a player from the server<br>
 <b>Returns:</b> Promise\<void><br>
 <b>Triggers events:</b> kick<br>
@@ -361,7 +361,7 @@ let myPlayer = await <instance>.getPlayer({ guid: "<SomePlayerGuid>" })
 })
 ```
 
-### .setPlayerCategory(player: [PlayerQuery](PlayerQuery), category: [PlayerCategory](PlayerCategory))
+### .setPlayerCategory(player: [PlayerQuery](#PlayerQuery), category: [PlayerCategory](#PlayerCategory))
 <b>Use:</b> <br>
 <b>Returns:</b> <br>
 <b>Triggers events:</b> <br>
@@ -452,7 +452,7 @@ none
 none
 ```
 
-### .setCreative(options: [CreativeConfig](CreativeConfig))
+### .setCreative(options: [CreativeConfig](#CreativeConfig))
 <b>This function is not yet implemented, due to the limitations of the server.</b>
 <b>Use:</b> Make the active save a creative save (one time use).<br>
 <b>Returns:</b> none<br>
