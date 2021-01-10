@@ -229,17 +229,17 @@ These are writen using JSDoc.
 <br>
 In markdown:
 <dl>
-<dt><a name="ClientOptions">ClientOptions</a>: {ip: String, port: Number, password?: String, timeout?: Number}</dt>
+<dt><a name="#ClientOptions">ClientOptions</a>: {ip: String, port: Number, password?: String, timeout?: Number}</dt>
 <dd><p>Property: ip,<br>Type: String,<br>Description: The IP-address to connect to</p></dd>
 <dd><p>Property: port,<br>Type: Number,<br>Description: The port number the server is listening for rcon</p></dd>
 <dd><p>Property: password,<br>Type: String,<br>Description: The rcon password, leave emtpy if the server does not require an rcon password</p></dd>
 <dd><p>Property: timeout,<br>Type: Number,<br>Description: The timeout limit in ms. If not set, will default to 15000</p></dd>
-<dt><a name="PlayerQuery">PlayerQuery</a>: {guid?: String, name?: String, index?: Number}</dt>
+<dt><a name="#PlayerQuery">PlayerQuery</a>: {guid?: String, name?: String, index?: Number}</dt>
 <dd><p><b>Only one of thse properties is required</b></p></dd>
 <dd><p>Property: ?guid,<br>Type: String,<br>Description: A player guid. This is a string id unique for each player, which never changes</p></dd>
 <dd><p>Property: ?name,<br>Type: String,<br>Description: The IP-address to connect to</p></dd>
 <dd><p>Property: ?index,<br>Type: Number,<br>Description: The player index (in the known players list)</p></dd>
-<dt><a name="PlayerCategory">PlayerCategory</a>: "Unlisted" or "Blacklisted" or "Whitelisted" or "Admin" or "Pending" or "Owner"</dt>
+<dt><a name="#PlayerCategory">PlayerCategory</a>: "Unlisted" or "Blacklisted" or "Whitelisted" or "Admin" or "Pending" or "Owner"</dt>
 <dd><p>Defenitions:<br>
      - Unlisted = No permissions, blocked by whitelist if enabled<br>
      - Blacklisted = Same as banned<br>
@@ -247,7 +247,7 @@ In markdown:
      - Admin = Max permissions possible for anyone but the owner<br>
      - Pending = Not yet set, will be automatically set to Unlisted on next connect if not changed by then<br>
      - Owner = The owner, all permissions</p></dd>
-<dt><a name="CreativeConfig">CreativeConfig</a>: {fuel: Boolean, invincible: Boolean, hazards: Boolan, oxygen: Boolean, backpackpower: Boolean}</dt>
+<dt><a name="#CreativeConfig">CreativeConfig</a>: {fuel: Boolean, invincible: Boolean, hazards: Boolan, oxygen: Boolean, backpackpower: Boolean}</dt>
 <dd><p>Property: fuel,<br>Type: Boolean,<br>Description: Should fuel consumption be enabled?</p></dd>
 <dd><p>Property: invincible,<br>Type: Boolean,<br>Description: Should invincibility be enabled?</p></dd>
 <dd><p>Property: hazards,<br>Type: Boolean,<br>Description: Should hazards be enabled?</p></dd>
