@@ -1,9 +1,11 @@
 /**
  * -------------------------------------------
  * 
- * Rcon client for the gameserver of Astroneer
+ * Rcon client for the game server of Astroneer
  * 
  * Github: https://github.com/Esinko/AstroneerRconClient
+ * 
+ * Version 2.1
  * 
  * -------------------------------------------
  * 
@@ -18,7 +20,7 @@
  */
 class Client extends require("events").EventEmitter {
     // ------------------------------------------------------------------------------------------------------------------------------------------------
-    // Custom type defenitions
+    // Custom type definitions
     // ------------------------------------------------------------------------------------------------------------------------------------------------
 
     /**
@@ -26,7 +28,7 @@ class Client extends require("events").EventEmitter {
      * @typedef {{ip: String, port: Number, password?: String, timeout?: Number}} ClientOptions
      * @property {String} ip The IP-address to connect to
      * @property {Number} port The port number the server is listening for rcon
-     * @property {String} password The rcon password, leave emtpy if the server does not require an rcon password
+     * @property {String} password The rcon password, leave empty if the server does not require an rcon password
      * @property {Number} timeout The timeout limit in ms. If not set, will default to 15000
      */
     
@@ -34,7 +36,7 @@ class Client extends require("events").EventEmitter {
      * A query object to search for players
      * @typedef {{guid?: String, name?: String, index?: Number}} PlayerQuery
      * @property {String} guid A player guid. This is a string id unique for each player, which never changes
-     * @property {String} name The playername
+     * @property {String} name The player name
      * @property {Number} index The player index (in the known players list)
      */
 
@@ -51,7 +53,7 @@ class Client extends require("events").EventEmitter {
 
     /**
      * Creative save configuration
-     * @typedef {{fuel: Boolean, invincible: Boolean, hazards: Boolan, oxygen: Boolean, backpackpower: Boolean}} CreativeConfig Save's creative configuration
+     * @typedef {{fuel: Boolean, invincible: Boolean, hazards: Boolean, oxygen: Boolean, backpackpower: Boolean}} CreativeConfig Save's creative configuration
      * @property {Boolean} fuel Should fuel consumption be enabled?
      * @property {Boolean} invincible Should invincibility be enabled?
      * @property {Boolean} hazards Should hazards be enabled?
@@ -331,7 +333,7 @@ class Client extends require("events").EventEmitter {
                                 this._error("Failed to run handler function", err)
                             }
                         }else {
-                            this._error("Recieved an unexpected packet", new Error(JSON.stringify(data)))
+                            this._error("Received an unexpected packet", new Error(JSON.stringify(data)))
                         }
                     }
                     socket.on("data", async data => {
@@ -339,7 +341,7 @@ class Client extends require("events").EventEmitter {
                         // Which really makes no sense, but this hacky fix will do
                         // Here we basically just wait 90ms after a packet has arrived
                         // If another packet comes in within that 90ms window, it will be merged with the first packet
-                        if(waiting == false){ // This means we or not in ^that 90ms windows of mergi packets
+                        if(waiting == false){ // This means we or not in ^that 90ms windows of merging packets
                             waiting = true
                             tmpCache = data
                             setTimeout(async () => {
@@ -387,7 +389,7 @@ class Client extends require("events").EventEmitter {
         return new Promise((resolve) => {
             let self = () => {
                 try {
-                    // Are we the first element in the queue beind handled?
+                    // Are we the first element in the queue being handled?
                     if(this._.queue[0] == self) this._.queue.splice(0,1) // Remove ourself from the queue
                     //Format: <prefix><command>\n
                     let encoded = Uint8Array.from(new Buffer.from(this.const.commandPrefix + data + "\n", "binary"))
@@ -432,7 +434,7 @@ class Client extends require("events").EventEmitter {
                                     // Timeout
                                     let t = setTimeout(async () => {
                                         if(cleared != false) return
-                                        this._error("Server timedout", new Error("Timedout"))
+                                        this._error("Server timeout", new Error("Timeout"))
                                     }, this.timeout)
                                 }
                             })
@@ -506,7 +508,7 @@ class Client extends require("events").EventEmitter {
                     }else if(options.index != undefined){
                         resolve(response[options.index])
                     }else {
-                        reject("No supported query parameter suplied")
+                        reject("No supported query parameter supplied")
                     }
                 })
             }
@@ -646,7 +648,7 @@ class Client extends require("events").EventEmitter {
                     this._error("Failed to get player", err)
                 })
             }else {
-                reject("No such category (Note: All categories' name's first charecter is uppercase!)")
+                reject("No such category (Note: All categories' name's first character is uppercase!)")
             }
         })
     }
@@ -711,7 +713,7 @@ class Client extends require("events").EventEmitter {
 
     /**
      * Save the game
-     * @param {String} name (This parameter is optiona!) Set the name of the new save
+     * @param {String} name (This parameter is optional!) Set the name of the new save
      * State: Unstable
      */
     async save(name){
@@ -1007,7 +1009,7 @@ class Client extends require("events").EventEmitter {
 }
 
 
-// Link clas is WIP!
+// Link class is WIP!
 /**
  * Custom client implementation for the popular server management software called AstroLauncher.
  * 
@@ -1017,7 +1019,7 @@ class Client extends require("events").EventEmitter {
  */
 class Link extends require("events").EventEmitter {
     // ------------------------------------------------------------------------------------------------------------------------------------------------
-    // Custom type defenitions
+    // Custom type definitions
     // ------------------------------------------------------------------------------------------------------------------------------------------------
 
     /**
@@ -1032,7 +1034,7 @@ class Link extends require("events").EventEmitter {
      * A query object to search for players
      * @typedef {{guid?: String, name?: String, index?: Number}} PlayerQuery
      * @property {String} guid A player guid. This is a string id unique for each player, which never changes
-     * @property {String} name The playername
+     * @property {String} name The player name
      * @property {Number} index The player index (in the known players list)
      */
 
@@ -1049,7 +1051,7 @@ class Link extends require("events").EventEmitter {
 
     /**
      * Creative save configuration
-     * @typedef {{fuel: Boolean, invincible: Boolean, hazards: Boolan, oxygen: Boolean, backpackpower: Boolean}} CreativeConfig Save's creative configuration
+     * @typedef {{fuel: Boolean, invincible: Boolean, hazards: Boolean, oxygen: Boolean, backpackpower: Boolean}} CreativeConfig Save's creative configuration
      * @property {Boolean} fuel Should fuel consumption be enabled?
      * @property {Boolean} invincible Should invincibility be enabled?
      * @property {Boolean} hazards Should hazards be enabled?
@@ -1197,7 +1199,7 @@ class Link extends require("events").EventEmitter {
 
     /**
      * Save the game
-     * @param {String} name (This parameter is optiona!) Set the name of the new save
+     * @param {String} name (This parameter is optional!) Set the name of the new save
      * State: Unstable
      */
     async save(name){
