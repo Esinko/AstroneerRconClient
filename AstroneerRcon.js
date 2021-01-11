@@ -213,7 +213,7 @@ class Client extends require("events").EventEmitter {
                                                     if(cachePlayer.inGame === true && player.inGame === false){
                                                         this.emit("playerleft", player)
                                                     }else if(cachePlayer.inGame === false && player.inGame === true){
-                                                        this.emit("playerjoin"), player
+                                                        this.emit("playerjoin", player)
                                                     }
                                                     if(cachePlayer.category == player.category){
                                                         this.emit("playercategory", player)
