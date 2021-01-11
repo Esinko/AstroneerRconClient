@@ -95,7 +95,7 @@ Here's a list of commands exposed to the rcon client and how to use them. Not al
 <br>
 The (?) symbol in the description means that the use case of the function is unknown.
 <br>
-(The arguments format below works like this ``\<ArgumentName>(\<Type>)``)
+(The arguments format below works like this ``<ArgumentName>(<Type>)``)
 <br>
 <b>Written for server version 1.17.89.0 (9.1.2021)</b>
 | Name | Arguments | Description | Functional? | Returns
