@@ -100,11 +100,11 @@ The (?) symbol in the description means that the use case of the function is unk
 | DSSetSaveGameInterval | \<Seconds>(Number) | Set the autosave internal in seconds | No | Unknown
 | DSSetActivityTimeout | \<Seconds>(Number) | Set the afk timeout in seconds | No | Unknown
 | DSTravelPass | \<ServerName>(String?) \<Password>(String) <Index>(Number?) | (?) | No | Unknown
-| DSTravelName | \<ServerName>(String?) <Index>(Number?) \<Password>(String) | (?) | No | Unknown
-| DSTravel | <ServerIndex>(Number?) \<Password>(String) | (?) Maybe to connect to some other server? This is for clients, so I have no idea... | No | Unknown
-| DSSetPassword | <Password>(String) | Set the server password | No | Unknown
-| DSKickPlayer | <PlayerIndex>(Number) | Kick a player based on their index in the known players list | No | Unknown
-| DSKickPlayerGuid | <PlayerGuid>(Number) | Kick a player based on their guid | Yes | Special: <br>``UAstroServerCommExecutor::DSKickPlayerGuid: request to kick player <PlayerGuid>             ???\<d/ >\r\n'`` The variable here on the end of the data is either "d" or nothing. It is "d" for success.
+| DSTravelName | \<ServerName>(String?) \<Index>(Number?) \<Password>(String) | (?) | No | Unknown
+| DSTravel | \<ServerIndex>(Number?) \<Password>(String) | (?) Maybe to connect to some other server? This is for clients, so I have no idea... | No | Unknown
+| DSSetPassword | \<Password>(String) | Set the server password | No | Unknown
+| DSKickPlayer | \<PlayerIndex>(Number) | Kick a player based on their index in the known players list | No | Unknown
+| DSKickPlayerGuid | \<PlayerGuid>(Number) | Kick a player based on their guid | Yes | Special: <br>``UAstroServerCommExecutor::DSKickPlayerGuid: request to kick player <PlayerGuid>             ???\<d/ >\r\n'`` The variable here on the end of the data is either "d" or nothing. It is "d" for success.
 | DSGetServerList | None | Unknown | No | Unknown
 | DSSetBackpackPowerUnlimitedCreative | \<Boolean>(Boolean) | (?) Disable or enable backpack power limits | No | Unknown
 | DSSetInvisibleToHazardsCreative | \<Boolean>(Boolean) | (?) Make the players invincible to hazards | No | Unknown
@@ -115,7 +115,7 @@ The (?) symbol in the description means that the use case of the function is unk
 | DSGetProperties | None | Unknown | No | Unknown
 | DSServerStatistics() | None | Get information about the server | Yes | Special: ``{"build":"<ServerVersion>","ownerName":"<ServerOwnerName>","maxInGamePlayers":<ServerPlayerLimit>,"playersInGame":<PlayersInGame>,"playersKnownToGame":<KnownPlayers>,"saveGameName":"<ActiveSave>","playerActivityTimeout":<AfkTimeout>,"secondsInGame":<SecondsPlayed>,"serverName":<ServerRegistryServerName>,"serverURL":<ServerUrl>,"averageFPS":<ServerFps/TickSpeed>,"hasServerPassword":<HasPassword>,"isEnforcingWhitelist":<HasWhitelistEnabled>,"creativeMode":<ActiveSaveIsCreative>,"isAchievementProgressionDisabled":<NoAchievements>}\r\n``
 | DSListPlayers | None | Get the known players list | Yes | Special: ``{"playerInfo":[{"playerGuid":"<PlayerGuid>","playerCategory":<PlayerCategory>,"playerName":<PlayerName>,"inGame":<PlayerConnected>,"index":<PlayerIndex>}, ...]}\r\n``
-| DSRenameGame | \<Oldname>(String) <NewName>(String) | Rename a save | No | Unknown
+| DSRenameGame | \<Oldname>(String) \<NewName>(String) | Rename a save | No | Unknown
 | DSDeleteGame | \<SaveName>(String) | Delete a save | No | Unknown
 | DSLoadGame | \<SaveName>(String) | Load a new save and set it as the active save for the server | Yes | None
 | DSSaveGame | \<Unknown>(String, Optional) | Save the game instantly | Yes | None
