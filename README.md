@@ -1,4 +1,6 @@
 # AstroneerRconClient
+<i><b>Version: 2.0</b></i>
+<br>
 A client for the Astroneer Rcon server built with Node.JS
 
 # Table of contents
