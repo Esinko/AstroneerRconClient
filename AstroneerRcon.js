@@ -208,9 +208,9 @@ class Client extends require("events").EventEmitter {
                                                 if(player.guid == cachePlayer.guid){
                                                     copy[cachePlayer.index] = null
                                                     // Handle changes
-                                                    if(cachePlayer.inGame == true && player.inGame == false){
+                                                    if(cachePlayer.inGame === true && player.inGame === false){
                                                         this.emit("playerleft", player)
-                                                    }else if(cachePlayer.inGame == false && player.inGame == true){
+                                                    }else if(cachePlayer.inGame === false && player.inGame === true){
                                                         this.emit("playerjoin"), player
                                                     }
                                                     if(cachePlayer.category == player.category){
@@ -618,7 +618,7 @@ class Client extends require("events").EventEmitter {
                                 reject("Due to the limitations of the Astroneer Dedicated server the category of this user cannot be modified")
                             }else {
                                 this.sendRaw("SetPlayerCategoryForPlayerName " + player.name + " " + category).then(async response => {
-                                    if(response.status == true){
+                                    if(response.status === true){
                                         player.category = category
                                         resolve(player)
                                     }else {
@@ -815,7 +815,7 @@ class Client extends require("events").EventEmitter {
                         }else {
                             // Now we are sure the save can be loaded
                             this.sendRaw("LoadGame " + save.name).then(async response => {
-                                if(response.status == true){
+                                if(response.status === true){
                                     resolve()
                                 }else {
                                     reject("Unexpected response", response)
