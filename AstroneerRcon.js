@@ -243,7 +243,7 @@ class Client extends require("events").EventEmitter {
                                                 if(cacheSave == null) continue
                                                 if(save.name == cacheSave.name){
                                                     copy.list[ii] = null
-                                                    cacheCopy[ii] = null
+                                                    cacheCopy[i] = null
                                                     if(save.lastEdited != null && cacheSave.lastEdited != null && save.lastEdited.toUTCString() != cacheSave.lastEdited.toUTCString()){
                                                         this.emit("save", save)
                                                     }
@@ -256,14 +256,14 @@ class Client extends require("events").EventEmitter {
                                             this.emit("setsave", saves.active)
                                         }
                                         // Handle deleted saves
-                                        for(let i = 0; i < copy.list.length; i++){
-                                            if(copy.list[i] == null) continue
-                                            this.emit("newsave", copy.list[i])
-                                        }
-                                        // Handle new saves
                                         for(let i = 0; i < cacheCopy.length; i++){
                                             if(cacheCopy[i] == null) continue
-                                            this.emit("deletesave", cacheCopy[i])
+                                            this.emit("newsave", cacheCopy[i])
+                                        }
+                                        // Handle new saves
+                                        for(let i = 0; i < copy.list.length; i++){
+                                            if(copy.list[i] == null) continue
+                                            this.emit("deletesave", copy.list[i])
                                         }
                                         this._.eventCache.saves = saves
                                     }
