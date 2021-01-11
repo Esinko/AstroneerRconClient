@@ -31,7 +31,7 @@ Here is some stuff you need to know before reading this:
 <br>
 <dt><p>Guid = An unique identifier for each player calculated using MurMurHash x86_64-bit based on unknown arguments (perhaps Steam/Microsoft account id). This value never changes.</p></dt>
 <dt><p>RCON = <b>R</b>emote <b>Con</b>sole</p></dt>
-<dt><p>< x > = Anything between <> tags is a placeholder for a variable (with the <> tags marking the placeholder)</p></dt>
+<dt><p>< x > = Anything between <> tags is a placeholder for a variable (user input) (with the <> tags marking the placeholder)</p></dt>
 </dl>
 
 ## Sending a command and receiving data
@@ -68,15 +68,15 @@ The basic structure is this:
 <command> <arguments,...>
 ```
 
-It's very simple. First there is the command part, which is well, the command. Then there's the arguments part, which is a list of arguments separated by spaces.
+First there is the command part, which is the command. Then there is the arguments part, which is a list of arguments separated by spaces.
+<br>
 If an argument contains a space, use " in the start and the end of the argument.
 <br>
-Here's a list of commands exposed to the rcon client and how to use them. Not all of these work, or they may be disabled.
+Here's a list of commands exposed to the rcon client and how to use them. Not all of these work due to bugs, or they may be disabled.
 <br>
 The (?) symbol in the description means that the use case of the function is unknown.
 <br>
-The Arguments format below works like this \<ArgumentName>(\<Type>)
-<br>
+(The arguments format below works like this ``\<ArgumentName>(\<Type>)``)
 <br>
 <b>Written for server version 1.17.89.0 (9.1.2021)</b>
 | Name | Arguments | Description | Functional? | Returns
@@ -126,18 +126,18 @@ The Arguments format below works like this \<ArgumentName>(\<Type>)
 # Usage
 This library is written in Node.Js and is to be used in Node.Js applications as a CommonJS module.
 <br>
-This module exports an object which contains the client class and the link class known as the Astrolauncher link class.
+This module exports an object which contains the <b>client class</b> and the link class known as the Astrolauncher <b>link class</b>.
 <br>
 Both classes implement same functionality, but the client class connects to the actual server, while the link class uses Astrolauncher's API to send commands to the server.
 <br>
 You can read more about it in the <b>How-it-works</b> section above.
 
 # Quickstart
-As both exported classes implement the same functions, but execute them in different ways. This quickstart applies for both, with minor modifications depending on what you need to use.
+As both exported classes implement the same functionality, but execute them in different ways. This quickstart applies for both, with minor modifications depending on what you need to use.
 <br>
-In short. If you are using AstroLauncher you need to create a new instance of the <b>Link</b> class, if you're not using anything that connects to the server rcon socket use the <b>Client</b> class.
+In short. If you are using AstroLauncher you need to create a new instance of the <b>Link</b> class, if you're not using anything that already connects to the server rcon socket use, the <b>Client</b> class.
 <br>
-In this quickstart we will be using the Client class, but you may switch it by changing the end of the first line to .link, instead of .client.
+In this quickstart we will be using the Client class, but you may switch it by changing the end of the first line to ``.link``, instead of ``.client``.
 
 ## Step 1
 First you need to download the library. You can do it using NPM:
