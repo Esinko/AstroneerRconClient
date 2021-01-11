@@ -103,7 +103,7 @@ The (?) symbol in the description means that the use case of the function is unk
 | DSRemote | \<ConsoleCommand>(String) | (?) Execute an in-game command in the in-game console | No | Unknown
 | DSClearFavoritesList | None | (?) Unknown | No | Unknown
 | DSRemoveFavorite | \<ServerUrl>(String, \<ip>:\<port>) | (?) Unknown | No | Unknown
-| DSAddFavorite | \<ServerUrl>((String, \<ip>:\<port>) \<NickName>(String) | (?) Unknown | No | Unknown
+| DSAddFavorite | \<ServerUrl>(String, \<ip>:\<port>) \<NickName>(String) | (?) Unknown | No | Unknown
 | DSGetFavoritesList | None | (?) Unknown | No | Unknown
 | DSClearRecentsList() | None | (?) Unknown | No | Unknown
 | DSGetRecentsList() | None | (?) Unknown | No | Unknown
