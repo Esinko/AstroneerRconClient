@@ -34,7 +34,7 @@ Here is some stuff you need to know before reading this:
 <dt><p>< x > = Anything between <> tags is a placeholder for a variable (user input) (with the <> tags marking the placeholder)</p></dt>
 </dl>
 
-## Sending a command and receiving data
+## Sending and receiving data
 Commands are sent to the server as strings followed by a newline (\n), encoded into raw binary bytes. You will simply connect with a tcp socket client and start sending commands to the server.
 <br>
 If the server requires a password, send the password in the same encoded format and with it a following (\n) newline to allow commands to be executed.
