@@ -395,7 +395,11 @@ let myPlayer = await <instance>.getPlayer({ guid: "<SomePlayerGuid>" })
 <b>Triggers events:</b> <br>
 <b>Usage:</b>
 ```
--
+<instance>.setPlayerCategory({guid: "<SomePlayerGuid>"}, "<SomePlayerCategory>).then(() => {
+    console.log("Category set! It will be applied on next join.")
+}).catch((err) => {
+    console.log("Failed to apply category:", err)
+})
 ```
 
 ### .listSaves()
