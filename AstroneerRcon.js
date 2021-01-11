@@ -232,7 +232,7 @@ class Client extends require("events").EventEmitter {
                                     }else {
                                         let copy = this._.eventCache.saves
                                         copy.list = this._.eventCache.saves.list.slice(0)
-                                        let cacheCopy = this._.eventCache.saves.list.slice(0)
+                                        let cacheCopy = saves.list.slice(0)
                                         // Handle modified save
                                         for(let i = 0; i < saves.list.length; i++){
                                             let save = saves.list[i]
@@ -242,7 +242,7 @@ class Client extends require("events").EventEmitter {
                                                 if(save.name == cacheSave.name){
                                                     copy.list[ii] = null
                                                     cacheCopy[ii] = null
-                                                    if(save.lastEdited.toUTCString() != cacheSave.lastEdited.toUTCString()){
+                                                    if(save.lastEdited != null && cacheSave.lastEdited != null && save.lastEdited.toUTCString() != cacheSave.lastEdited.toUTCString()){
                                                         this.emit("save", save)
                                                     }
                                                 }
@@ -253,12 +253,12 @@ class Client extends require("events").EventEmitter {
                                         if(this._.eventCache.saves.active.name != saves.active.name){
                                             this.emit("setsave", saves.active)
                                         }
-                                        // Handle new saves
+                                        // Handle deleted saves
                                         for(let i = 0; i < copy.list.length; i++){
                                             if(copy.list[i] == null) continue
                                             this.emit("newsave", copy.list[i])
                                         }
-                                        // Handle deleted saves
+                                        // Handle new saves
                                         for(let i = 0; i < cacheCopy.length; i++){
                                             if(cacheCopy[i] == null) continue
                                             this.emit("deletesave", cacheCopy[i])
@@ -657,46 +657,55 @@ class Client extends require("events").EventEmitter {
      */
     async listSaves(){
         return new Promise((resolve) => {
-            this.sendRaw("ListGames").then(async response => {
-                // Parse the response
-                let active = response.activeSaveName
-                let list = response.gameList
-                let newList = []
-                for(let i = 0; i < list.length; i++){
-                    // Parse each entry in the list
-                    let save = list[i]
-                    // Create date obj
-                    let dateObj = new Date()
-                    dateObj.setFullYear(save.date.split(".")[0])
-                    dateObj.setMonth(save.date.split(".")[1].startsWith("0") ? parseInt(save.date.split(".")[1].split("")[1])-1 : parseInt(save.date.split(".")[1])-1)
-                    dateObj.setHours(parseInt(save.date.split("-")[1].split(".")[0])+2) // Why does this register as 2 behind...?
-                    dateObj.setMinutes(save.date.split("-")[1].split(".")[1])
-                    dateObj.setSeconds(save.date.split("-")[1].split(".")[2])
-                    // Push the new list
-                    let c = {
-                        name: save.name,
-                        lastEdited: dateObj,
-                        creative: save.bHasBeenFlaggedAsCreativeModeSave,
-                        index: i
+            let t = () => {
+                this.sendRaw("ListGames").then(async response => {
+                    // Parse the response
+                    let active = response.activeSaveName
+                    let list = response.gameList
+                    let newList = []
+                    if(list == undefined){
+                        setTimeout(async () => {
+                            t()
+                        }, 500)
+                    }else {
+                        for(let i = 0; i < list.length; i++){
+                            // Parse each entry in the list
+                            let save = list[i]
+                            // Create date obj
+                            let dateObj = new Date()
+                            dateObj.setFullYear(save.date.split(".")[0])
+                            dateObj.setMonth(save.date.split(".")[1].startsWith("0") ? parseInt(save.date.split(".")[1].split("")[1])-1 : parseInt(save.date.split(".")[1])-1)
+                            dateObj.setHours(parseInt(save.date.split("-")[1].split(".")[0])+2) // Why does this register as 2 behind...?
+                            dateObj.setMinutes(save.date.split("-")[1].split(".")[1])
+                            dateObj.setSeconds(save.date.split("-")[1].split(".")[2])
+                            // Push the new list
+                            let c = {
+                                name: save.name,
+                                lastEdited: dateObj,
+                                creative: save.bHasBeenFlaggedAsCreativeModeSave,
+                                index: i
+                            }
+                            newList.push(c)
+                            if(save.name == active) active = c
+                        }
+                        // Active save has never been loaded
+                        if(typeof active == "string"){
+                            active = {
+                                name: active,
+                                lastEdited: null,
+                                creative: null,
+                                index: null
+                            }
+                            newList.push(active)
+                        }
+                        resolve({
+                            active: active,
+                            list: newList
+                        })
                     }
-                    newList.push(c)
-                    if(save.name == active) active = c
-                }
-                // Active save has never been loaded
-                if(typeof active == "string"){
-                    active = {
-                        name: active,
-                        lastEdited: null,
-                        creative: null,
-                        index: null
-                    }
-                    newList.push(active)
-                }
-                resolve({
-                    active: active,
-                    list: newList
                 })
-            })
+            }
+            t()
         })
     }
 
@@ -809,7 +818,7 @@ class Client extends require("events").EventEmitter {
                                 if(response.status == true){
                                     resolve()
                                 }else {
-                                    reject(response._message)
+                                    reject("Unexpected response", response)
                                 }
                             })
                         }
@@ -906,8 +915,9 @@ class Client extends require("events").EventEmitter {
                         this.sendRaw("NewGame " + name, null, true).then(() => {
                             // No response?
                             let e = async () => {
-                                this.listSaves().then(async saves => {
-                                    if(saves.active.name == name){
+                                this.listSaves().then(async saves1 => {
+                                    if(saves1.active.name == name){
+                                        let e = 0 // This just makes it work I guess...
                                         if(activate == false){
                                             // We don't want the save to be activated
                                             this.setSave(oldActive.name).then(() => {
@@ -922,7 +932,7 @@ class Client extends require("events").EventEmitter {
                                     }else {
                                         setTimeout(async () => {
                                             e()
-                                        }, 100)
+                                        }, 1000)
                                     }
                                 })
                             }

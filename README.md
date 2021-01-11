@@ -1,5 +1,5 @@
 # AstroneerRconClient
-A client for the Astroneer Rcon server built with Node.Js
+A client for the Astroneer Rcon server built with Node.JS
 
 # Table of contents
 ## Please take a moment to look at this list to find what you are looking for!
@@ -8,63 +8,67 @@ A client for the Astroneer Rcon server built with Node.Js
 <dd><p>In-depth documentation on how the remote console works.</p></dd>
 <dl>
 <dt><a href="#Usage">Usage</a></dt>
-<dd><p>The documentation of this library. If you want to know how to use this libary, start here!</p></dd>
+<dd><p>The documentation of this library. If you want to know how to use this library, start here!</p></dd>
 <dd><a href="#Quickstart">Quickstart</a></dd>
-<dd><a href="#Type-defenitions">Type defenitions</a></dd>
+<dd><a href="#Type-definitions">Type definitions</a></dd>
 <dd><a href="#Client-class">Client class</a></dd>
 <dd><a href="#AstroLauncher-Link-class">AstroLauncher Link class</a></dd>
 <dd><a href="#Errors-and-bugs">Errors and Bugs</a></dd>
 </dl>
 
 # How-it-works
-Here I try to go into as much detail as possible, on how the rcon system in the Astroneer Dedicated servers work.
+How does rcon work in the Astroneer Dedicated server?
 <br>
-To enable rcon for a server, set the ConsolePort value in the AstroServerSettings.ini in Astro/Saved/Config within the server folder.
+First to enable rcon for a server, set the ConsolePort value in the AstroServerSettings.ini in Astro/Saved/Config within the server folder.
 <br>
-It's also recommended to set ConsolePassword to a random secure password, that an rcon client will use to connect.
+It is also recommended to set ConsolePassword to a random secure password, that the rcon client will use to connect.
 
 ## What is it?
-The "rcon" system is not really rcon. It's simply a tcp socket server that accepts one client to connect. This server will listen and respond with data depending on client requests.
+It is simply a tcp socket server that accepts one client to connect. This server will listen and respond with data depending on client requests as it is the socket continuous duplex stream.
 
 ## Before we continue...
-Here's some stuff you need to know before reading this:
+Here is some stuff you need to know before reading this:
 <br>
-<dt><p>Guid = An unique identifier for each player calculated using MurMurHash x86_64-bit based on unkown arguments (perhaps Steam/Microsoft account id). This value never changes.</p></dt>
+<dt><p>Guid = An unique identifier for each player calculated using MurMurHash x86_64-bit based on unknown arguments (perhaps Steam/Microsoft account id). This value never changes.</p></dt>
 <dt><p>RCON = <b>R</b>emote <b>Con</b>sole</p></dt>
-<dt><p>< x > = Anything between <> tags is a placeholder for a variable (with the <> tags marking the placholder)</p></dt>
+<dt><p>< x > = Anything between <> tags is a placeholder for a variable (with the <> tags marking the placeholder)</p></dt>
 </dl>
 
 ## Sending a command and receiving data
-Commands are sent to the server as strings followed by a newline (\n) encoded into raw binary bytes. You will simply connect with a tcp socket and start sending commands to the server.
+Commands are sent to the server as strings followed by a newline (\n), encoded into raw binary bytes. You will simply connect with a tcp socket client and start sending commands to the server.
 <br>
 If the server requires a password, send the password in the same encoded format and with it a following (\n) newline to allow commands to be executed.
 <br>
-The server will respond after command execution with the requested data or with a result, which also contains possible errors.
+The server will respond after command execution with the requested data, result of execution or with an error.
 For some reason, not all the commands return responses, but most of them return JSON.
 <br>Here are some examples of basic responses after command execution:
+
 ```
-{ _message: "Some error occured!", status: false} // Something went wrong :/
+{ _message: "Some error occurred!", status: false} // Something went wrong :/
 ```
+
 ```
 { _message: "Success!", status: true} // It worked!
 ```
-It's pretty easy to understand the basic structure of a response right? If the staus JSON value is false, the _message value will contain an error.
+
+It's pretty easy to understand the basic structure of a response right? If the status JSON value is false, the _message value will contain an error.
 If the status value is true, the _message value contains a success message.
-<br><br>
+<br>
 Now it's important to understand a key difference between commands with responses and commands with data. Commands with responses, such as "DSSetPlayerCategoryForPlayerName"
-return a standard response JSON object. If the command "has" data, which means you're requesting some data from the server, it will contain a command specific JSON value.
+return a standard response JSON object. If the command "has" data, which means you're requesting some data from the server, it will contain a command specific JSON response object.
 As an example "DSListPlayers" will return a JSON object, which has a "playerInfo" array, which contains information about each known player with it's command specific structure.
 <br>
-The rcon server can also return responses to multiple requests. Responses are always seperated by \r\n. The same applies for sending commands. You can ask for multiple response by sending multiple commands in a single packet seperated by \r\n.
-## Command reference
+Because of the continuous data stream nature of the tcp socket, the rcon server can also return responses to multiple requests at once. Responses are always separated by \r\n. 
 <br>
+The same applies for sending commands. You can send multiple commands separated by \n.
 
+## Command reference
 The basic structure is this:
 ```
 <command> <arguments,...>
 ```
 
-It's very simple. First there is the command part, which is pretty self explanitory. Then there's the arguments part, which is a list of arguments seperated by spaces.
+It's very simple. First there is the command part, which is well, the command. Then there's the arguments part, which is a list of arguments separated by spaces.
 If an argument contains a space, use " in the start and the end of the argument.
 <br>
 Here's a list of commands exposed to the rcon client and how to use them. Not all of these work, or they may be disabled.
@@ -78,7 +82,7 @@ The Arguments format below works like this \<ArgumentName>(\<Type>)
 | Name | Arguments | Description | Functional? | Returns
 | --- | --- | --- | --- | --- |
 | DSRemote | \<ConsoleCommand>(String) | (?) Execute an in-game command in the in-game console | No | Unknown
-| DSClearFavoritesList | None | (?) Unkown | No | Unknown
+| DSClearFavoritesList | None | (?) Unknown | No | Unknown
 | DSRemoveFavorite | \<ServerUrl>(String, \<ip>:\<port>) | (?) Unknown | No | Unknown
 | DSAddFavorite | \<ServerUrl>((String, \<ip>:\<port>) \<NickName>(String) | (?) Unknown | No | Unknown
 | DSGetFavoritesList | None | (?) Unknown | No | Unknown
@@ -86,7 +90,7 @@ The Arguments format below works like this \<ArgumentName>(\<Type>)
 | DSGetRecentsList() | None | (?) Unknown | No | Unknown
 | DSBackupSaveGames() | None | (?) Backup the servers saves | No | Unknown
 | DSSetBackupSaveGamesInterval | \<Seconds>(Number) | (?) Set the backup interval in seconds | No | Unknown
-| DSSetPlayerCategoryForPlayerName | \<PlayerName>(String) \<Category>(String, PlayerCategory) | Set a player's category based on the player's name. See the type defenition of PlayerCategory for more details on what the Category argument can be. | Yes | Unknown
+| DSSetPlayerCategoryForPlayerName | \<PlayerName>(String) \<Category>(String, PlayerCategory) | Set a player's category based on the player's name. See the type definition of PlayerCategory for more details on what the Category argument can be. | Yes | Unknown
 | DSSetPlayerCategory | \<Player>(String?) \<Category>(String, PlayerCategory) \<Index>(Number?) | (?) Set a player's category based on the player object? | No | Unknown
 | DSSetPlayerCategoryGuid | \<PlayerGuid> \<Category> | Set a player's category based on the player's guid. | No (Bug!) | Standard: <br>``{"_message":"updated entry: player=<PlayerName>, playerGuid=<PlayerGuid>, category=<PlayerGuid>","status":true}``
 | DSSetPlayerCategoryIdx | \<PlayerIndex> \<Category> | Set a player's category based on their index in the known players list. Please not the index can change, so it's better to use the guid equivalent for this command | No (Bug!) | Standard: <br>``{"_message":"updated entry: player=<PlayerName>, playerGuid=<PlayerGuid>, category=<PlayerGuid>","status":true}``
@@ -97,34 +101,34 @@ The Arguments format below works like this \<ArgumentName>(\<Type>)
 | DSTravelName | \<ServerName>(String?) <Index>(Number?) \<Password>(String) | (?) | No | Unknown
 | DSTravel | <ServerIndex>(Number?) \<Password>(String) | (?) Maybe to connect to some other server? This is for clients, so I have no idea... | No | Unknown
 | DSSetPassword | <Password>(String) | Set the server password | No | Unknown
-| DSKickPlayer | <PlayerIndex>(Number) | Kick a player based on their index in the known players list | No | Unkown
+| DSKickPlayer | <PlayerIndex>(Number) | Kick a player based on their index in the known players list | No | Unknown
 | DSKickPlayerGuid | <PlayerGuid>(Number) | Kick a player based on their guid | Yes | Special: <br>``UAstroServerCommExecutor::DSKickPlayerGuid: request to kick player <PlayerGuid>             ???\<d/ >\r\n'`` The variable here on the end of the data is either "d" or nothing. It is "d" for success.
-| DSGetServerList | None | Unknown | No | Unkown
+| DSGetServerList | None | Unknown | No | Unknown
 | DSSetBackpackPowerUnlimitedCreative | \<Boolean>(Boolean) | (?) Disable or enable backpack power limits | No | Unknown
 | DSSetInvisibleToHazardsCreative | \<Boolean>(Boolean) | (?) Make the players invincible to hazards | No | Unknown
 | DSSetInvincibleCreative | \<Boolean>(Boolean) | (?) Make the player invincible to any damage | No | Unknown 
 | DSSetOxygenFreeCreative |\<Boolean>(Boolean) | (?) Disable / Enable oxygen limitations | No | Unknown
 | DSSetFuelFreeCreative | \<Boolean>(Boolean) | (?) Disable / Enable fuel limitations | No | Unknown
-| DSCreativeMode | \<Boolean>(Boolean) | (?) Enable cretive mode for the active save | No | Unknown
+| DSCreativeMode | \<Boolean>(Boolean) | (?) Enable creative mode for the active save | No | Unknown
 | DSGetProperties | None | Unknown | No | Unknown
-| DSServerStatistics() | None | Get information about the server | Yes | Special: ``{"build":"<ServerVersion>","ownerName":"<ServerOwnerName>","maxInGamePlayers":<ServerPlayerLimit>,"playersInGame":<PlayersInGame>,"playersKnownToGame":<KnownPlayers>,"saveGameName":"<ActiveSave>","playerActivityTimeout":<AfkTiemout>,"secondsInGame":<SecondsPlayed>,"serverName":<ServerRegistryServerName>,"serverURL":<ServerUrl>,"averageFPS":<ServerFps/TickSpeed>,"hasServerPassword":<HasPassword>,"isEnforcingWhitelist":<HasWhitelistEnabled>,"creativeMode":<ActiveSaveIsCreative>,"isAchievementProgressionDisabled":<NoAchievements>}\r\n``
+| DSServerStatistics() | None | Get information about the server | Yes | Special: ``{"build":"<ServerVersion>","ownerName":"<ServerOwnerName>","maxInGamePlayers":<ServerPlayerLimit>,"playersInGame":<PlayersInGame>,"playersKnownToGame":<KnownPlayers>,"saveGameName":"<ActiveSave>","playerActivityTimeout":<AfkTimeout>,"secondsInGame":<SecondsPlayed>,"serverName":<ServerRegistryServerName>,"serverURL":<ServerUrl>,"averageFPS":<ServerFps/TickSpeed>,"hasServerPassword":<HasPassword>,"isEnforcingWhitelist":<HasWhitelistEnabled>,"creativeMode":<ActiveSaveIsCreative>,"isAchievementProgressionDisabled":<NoAchievements>}\r\n``
 | DSListPlayers | None | Get the known players list | Yes | Special: ``{"playerInfo":[{"playerGuid":"<PlayerGuid>","playerCategory":<PlayerCategory>,"playerName":<PlayerName>,"inGame":<PlayerConnected>,"index":<PlayerIndex>}, ...]}\r\n``
-| DSRenameGame | <Oldname>(String) <NewName>(String) | Rename a save | No | Unknown
-| DSDeleteGame | <SaveName>(String) | Delete a save | No | Unknown
-| DSLoadGame | <SaveName>(String) | Load a new save and set it as the active save for the server | Yes | None
-| DSSaveGame | <Unkown>(String, Optional) | Save the game instantly | Yes | None
-| DSNewGame | <NewSaveName>(String) | Create a new save and set it as active. All players will be forced to reload. | Yes | None
+| DSRenameGame | \<Oldname>(String) <NewName>(String) | Rename a save | No | Unknown
+| DSDeleteGame | \<SaveName>(String) | Delete a save | No | Unknown
+| DSLoadGame | \<SaveName>(String) | Load a new save and set it as the active save for the server | Yes | None
+| DSSaveGame | \<Unknown>(String, Optional) | Save the game instantly | Yes | None
+| DSNewGame | \<NewSaveName>(String) | Create a new save and set it as active. All players will be forced to reload. | Yes | None
 | DSServerShutdown | None | Shutdown the server gracefully | Yes | None
 | DSListGames | None | List all the saves available | Yes | Special: ``{"activeSaveName":"<ActiveSave>","gameList":[{"name":"<SaveName>","date":"<LastEdited, YYYY.MM.DD-hh.mm.ss>9,"bHasBeenFlaggedAsCreativeModeSave":<IsCreative>}, ...]}\r\n``
-| DSTravelURL | <ServerUrl> <Password> <Index> | (?) Go to another server? Again, this is for clients usually | No | Unknown
-| DSTravelFriend | <FriendName> <Password> <Index> | (?) Go/Connect to a friend? This is used to in clients to connect to a CoOp server usually | No | Unknown
+| DSTravelURL | \<ServerUrl> \<Password> \<Index> | (?) Go to another server? Again, this is for clients usually | No | Unknown
+| DSTravelFriend | \<FriendName> \<Password> \<Index> | (?) Go/Connect to a friend? This is used to in clients to connect to a CoOp server usually | No | Unknown
 
 # Usage
-This libary is written in Node.Js and is to be used in Node.Js applications as a CommonJS module.
+This library is written in Node.Js and is to be used in Node.Js applications as a CommonJS module.
 <br>
 This module exports an object which contains the client class and the link class known as the Astrolauncher link class.
 <br>
-Both classes implement same functionality, but the client class connects to the actual server, while the link class uses Astrolaunchers API to send commands to the server.
+Both classes implement same functionality, but the client class connects to the actual server, while the link class uses Astrolauncher's API to send commands to the server.
 <br>
 You can read more about it in the <b>How-it-works</b> section above.
 
@@ -136,7 +140,7 @@ In short. If you are using AstroLauncher you need to create a new instance of th
 In this quickstart we will be using the Client class, but you may switch it by changing the end of the first line to .link, instead of .client.
 
 ## Step 1
-First you need to download the libary. You can do it using NPM:
+First you need to download the library. You can do it using NPM:
 ```
 npm install Esinko/AstroneerRcon
 ```
@@ -145,14 +149,14 @@ Then you need to import the CommonJs module, you can do that with:
 
 ```
 const AstroneerRcon = require("astroneer-rcon").client
-// Tip: If we are operating in the same diretory replace the variable in the file path with a dot (.), or if AstroneerRcon is in a folder in your projects working directory. You may use ./<The folder you installed this lib with>/AstroneerRcon.js
+// Tip: If we are operating in the same directory replace the variable in the file path with a dot (.), or if AstroneerRcon is in a folder in your projects working directory. You may use ./<The folder you installed this lib with>/AstroneerRcon.js
 ```
 If AstroneerRcon is undefined, or you get an error, make sure your filepath is correct.
 
 ## Step 2
-Now that the libary has been imported, you need to connect to the server (or the AstroLauncher api, this quickstart works for both!)
+Now that the library has been imported, you need to connect to the server (or the AstroLauncher api, this quickstart works for both!)
 <br>
-First you need to create a new instance of the client/link and call .connect() with the constructor appropriate paramaters.
+First you need to create a new instance of the client/link and call .connect() with the constructor appropriate parameters.
 <br>
 AstroneerRcon is event driven. You can register listeners for multiple things happening in the server and in the client.
 <br>
@@ -169,7 +173,7 @@ let myInstance = new client({
 })
 // Register event listeners
 myInstance.on("error", async error => {
-    console.log("An error occured!\n", error)
+    console.log("An error occurred!\n", error)
     // It is very important you handle this. All unexpected errors will trigger this function, so you can handle it in your application.
 })
 
@@ -179,7 +183,7 @@ myInstance.on("connected", async () => {
     // Your app code should live here.
 })
 
-myInstance.connect() // Connect to the server, keep this line last if possible. At least below all the event listenr registrations. As they may not be registered correctly, if the client is already connecting or connected.
+myInstance.connect() // Connect to the server, keep this line last if possible. At least below all the event listener registrations. As they may not be registered correctly, if the client is already connecting or connected.
 ```
 
 <br>
@@ -201,7 +205,7 @@ let myInstance = new client({
 })
 // Register event listeners
 myInstance.on("error", async error => {
-    console.log("An error occured!\n", error)
+    console.log("An error occurred!\n", error)
     // It is very important you handle this. All unexpected errors will trigger this function, so you can handle it in your application.
 })
 
@@ -212,42 +216,42 @@ myInstance.on("connected", async () => {
     console.log("Got this information about the server:\n", server)
 })
 
-myInstance.connect() // Connect to the server, keep this line last if possible. At least below all the event listenr registrations. As they may not be registered correctly, if the client is already connecting or connected.
+myInstance.connect() // Connect to the server, keep this line last if possible. At least below all the event listener registrations. As they may not be registered correctly, if the client is already connecting or connected.
 ```
 
 That's pretty much all there is to know about the basic usage of this library.
 <br>
-Refer to the Client class section for more details on what you can do with this libary!
+Refer to the Client class section for more details on what you can do with this library!
 
 # Client-class
 The client class is where the rcon client lives. It contains all the commands you can execute against the server and it formats the data for easier usage across application.
 <br>
 Such as handling dates better and building cleaner response objects.
 
-## Type-defenitions
-These are writen using JSDoc.
+## Type-definitions
+These are written using JSDoc.
 <br>
 In markdown:
 <dl>
 <dt><a name="#ClientOptions">ClientOptions</a>: {ip: String, port: Number, password?: String, timeout?: Number}</dt>
 <dd><p>Property: ip,<br>Type: String,<br>Description: The IP-address to connect to</p></dd>
 <dd><p>Property: port,<br>Type: Number,<br>Description: The port number the server is listening for rcon</p></dd>
-<dd><p>Property: password,<br>Type: String,<br>Description: The rcon password, leave emtpy if the server does not require an rcon password</p></dd>
+<dd><p>Property: password,<br>Type: String,<br>Description: The rcon password, leave empty if the server does not require an rcon password</p></dd>
 <dd><p>Property: timeout,<br>Type: Number,<br>Description: The timeout limit in ms. If not set, will default to 15000</p></dd>
 <dt><a name="#PlayerQuery">PlayerQuery</a>: {guid?: String, name?: String, index?: Number}</dt>
-<dd><p><b>Only one of thse properties is required</b></p></dd>
+<dd><p><b>Only one of these properties is required</b></p></dd>
 <dd><p>Property: ?guid,<br>Type: String,<br>Description: A player guid. This is a string id unique for each player, which never changes</p></dd>
 <dd><p>Property: ?name,<br>Type: String,<br>Description: The IP-address to connect to</p></dd>
 <dd><p>Property: ?index,<br>Type: Number,<br>Description: The player index (in the known players list)</p></dd>
 <dt><a name="#PlayerCategory">PlayerCategory</a>: "Unlisted" or "Blacklisted" or "Whitelisted" or "Admin" or "Pending" or "Owner"</dt>
-<dd><p>Defenitions:<br>
+<dd><p>Definitions:<br>
      - Unlisted = No permissions, blocked by whitelist if enabled<br>
      - Blacklisted = Same as banned<br>
      - Whitelisted = No permissions, allowed by whitelist if enabled<br>
      - Admin = Max permissions possible for anyone but the owner<br>
      - Pending = Not yet set, will be automatically set to Unlisted on next connect if not changed by then<br>
      - Owner = The owner, all permissions</p></dd>
-<dt><a name="#CreativeConfig">CreativeConfig</a>: {fuel: Boolean, invincible: Boolean, hazards: Boolan, oxygen: Boolean, backpackpower: Boolean}</dt>
+<dt><a name="#CreativeConfig">CreativeConfig</a>: {fuel: Boolean, invincible: Boolean, hazards: Boolean, oxygen: Boolean, backpackpower: Boolean}</dt>
 <dd><p>Property: fuel,<br>Type: Boolean,<br>Description: Should fuel consumption be enabled?</p></dd>
 <dd><p>Property: invincible,<br>Type: Boolean,<br>Description: Should invincibility be enabled?</p></dd>
 <dd><p>Property: hazards,<br>Type: Boolean,<br>Description: Should hazards be enabled?</p></dd>
@@ -270,7 +274,7 @@ This is the constructor, which is in this case used to configure the client and 
 constructor(options){...}
 ```
 
-The options object is an instace of [ClientOptions](#ClientOptions). Look in the Type defenitions section for more details.
+The options object is an instance of [ClientOptions](#ClientOptions). Look in the Type definitions section for more details.
 <br>
 
 ## Internal variables
@@ -300,8 +304,17 @@ The options object is an instace of [ClientOptions](#ClientOptions). Look in the
 </dd>
 </dl>
 
+# Events
+This library also provides multiple events for things happening on the server. Here is a list of events and their meanings:
+- "playerjoin", Emitted when a player joins the server. Arguments: Object<\Player>
+- "playerleft", Emitted when a player has left the server. Arguments: Object<\Player>
+- "newplayer", Emitted when a new player joins the server. Arguments: Object<\Player>
+- "save", Emitted when the game is saved. Arguments: Object<\Save>
+- "setsave", Emitted when the active save changes. Arguments: Object<\Save>
+This list does not include the "error" event. For more information see: (Errors and bugs)[Errors-and-bugs]
+
 ## Functions
-Now that we've got the large constructor out of the way. Here is the list of all functions and their example usages:
+List of functions in the Client class
 
 ### .connect()
 <b>Use:</b> Connect to the server<br>
@@ -495,15 +508,6 @@ let myServer = await <instance>.getInfo()
 console.log("My server:\n", myserver)
 ```
 
-# Events
-This libary also provides multiple events for things happening on the server. Here is a list of events and their meanings:
-- "playerjoin", Emitted when a player joins the server. Arguments: Object<\Player>
-- "playerleft", Emitted when a player has left the server. Arguments: Object<\Player>
-- "newplayer", Emitted when a new player joins the server. Arguments: Object<\Player>
-- "save", Emitted when the game is saved. Arguments: Object<\Save>
-- "setsave", Emitted when the active save changes. Arguments: Object<\Save>
-This list does not inlcude the "error" event. For more information see: (Errors and bugs)[Errors-and-bugs]
-
 # AstroLauncher-link-class
 This is the second class exported by the library. It implements the same functionality as above, but instead connects to the AstroLauncher API to send commands to the server.
 <br>The command reference for this class is the same instead the constructor is a bit different.
@@ -512,7 +516,7 @@ Instead of taking the server port, ip and console password. It want's the ip, po
 Please note, that some features of rcon that are yet to be implemented in AstroLauncher's api, will of course not be usable.
 
 # Errors-and-bugs
-Error handling is very important. In this libary all errors are handeled with the "error" event. If this event has no listeners, the error will be thrown in to global scope.
+Error handling is very important. In this library all errors are handled with the "error" event. If this event has no listeners, the error will be thrown in to global scope.
 <br>
 If you encounter any bugs, or anything unexpected. Don't hesitate to create a <a href="https://github.com/Esinko/AstroneerRconClient/issues/new">new issue</a>.
 
