@@ -289,7 +289,7 @@ This is the constructor, which is in this case used to configure the client and 
 constructor(options){...}
 ```
 
-The options object is an instance of [ClientOptions](#ClientOptions). Look in the Type definitions section for more details.
+The options object is an instance of [ClientOptions](#clientoptions). Look in the Type definitions section for more details.
 <br>
 
 ## Internal variables
@@ -326,7 +326,7 @@ This library also provides multiple events for things happening on the server. H
 - "newplayer", Emitted when a new player joins the server. Arguments: Object<\Player>
 - "save", Emitted when the game is saved. Arguments: Object<\Save>
 - "setsave", Emitted when the active save changes. Arguments: Object<\Save>
-This list does not include the "error" event. For more information see: (Errors and bugs)[Errors-and-bugs]
+This list does not include the "error" event. For more information see: (Errors and bugs)[errors-and-bugs]
 
 ## Functions
 List of functions in the Client class
@@ -351,7 +351,7 @@ let list = await <instance>.listPlayers()
 // "list" will be the known players list
 ```
 
-### .getPlayer(player: [PlayerQuery](#PlayerQuery))
+### .getPlayer(player: [PlayerQuery](#playerquery))
 <b>Use:</b> Get information about a specific player<br>
 <b>Returns:</b> Promise<Object|Array><br>
 <b>Triggers events:</b> none<br>
@@ -363,7 +363,7 @@ let myPlayer = await <instance>.getPlayer({ guid: "<SomePlayerGuid>" })
 // an array with all matches.
 ```
 
-### .kick(player: [PlayerQuery](#PlayerQuery))
+### .kick(player: [PlayerQuery](#playerquery))
 <b>Use:</b> Kick a player from the server<br>
 <b>Returns:</b> Promise\<void><br>
 <b>Triggers events:</b> kick<br>
@@ -389,7 +389,7 @@ let myPlayer = await <instance>.getPlayer({ guid: "<SomePlayerGuid>" })
 })
 ```
 
-### .setPlayerCategory(player: [PlayerQuery](#PlayerQuery), category: [PlayerCategory](#PlayerCategory))
+### .setPlayerCategory(player: [PlayerQuery](#playerquery), category: [PlayerCategory](#playercategory))
 <b>Use:</b> <br>
 <b>Returns:</b> <br>
 <b>Triggers events:</b> <br>
@@ -480,7 +480,7 @@ none
 none
 ```
 
-### .setCreative(options: [CreativeConfig](#CreativeConfig))
+### .setCreative(options: [CreativeConfig](#creativeconfig))
 <b>This function is not yet implemented, due to the limitations of the server.</b>
 <b>Use:</b> Make the active save a creative save (one time use).<br>
 <b>Returns:</b> none<br>
