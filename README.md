@@ -8,12 +8,29 @@ A client for the Astroneer Rcon server built with Node.JS
 <dl>
 <dt><a href="#How-it-works">How it works</a></dt>
 <dd><p>In-depth documentation on how the remote console works.</p></dd>
+<dd><a href="#sending-and-receiving-data">Sending and receiving data</a></dd>
+<dd><a href="#command-reference">Command reference</a></dd>
 <dl>
 <dt><a href="#Usage">Usage</a></dt>
 <dd><p>The documentation of this library. If you want to know how to use this library, start here!</p></dd>
 <dd><a href="#Quickstart">Quickstart</a></dd>
-<dd><a href="#Type-definitions">Type definitions</a></dd>
-<dd><a href="#Client-class">Client class</a></dd>
+<dd>
+<dl>
+<dt><a href="#Type-definitions">Type definitions</a></dt>
+<dd><a href="#clientoptions">ClientOptions</a></dd>
+<dd><a href="#playerquery">PlayerQuery</a></dd>
+<dd><a href="#playercategory">PlayerCategory</a></dd>
+<dd><a href="#creativeconfig">CreativeConfig</a></dd>
+</dl>
+</dd>
+<dd>
+<dl>
+<dt><a href="#Client-class">Client class</a></dt>
+<dd><a href="#constructor">Constructor</a></dd>
+<dd><a href="#functions">Functions</a></dd>
+<dd><a href="#events">Events</a></dd>
+</dl>
+</dd>
 <dd><a href="#AstroLauncher-Link-class">AstroLauncher Link class</a></dd>
 <dd><a href="#Errors-and-bugs">Errors and Bugs</a></dd>
 </dl>
@@ -36,7 +53,7 @@ Here is some stuff you need to know before reading this:
 <dt><p>< x > = Anything between <> tags is a placeholder for a variable (user input) (with the <> tags marking the placeholder)</p></dt>
 </dl>
 
-## Sending and receiving data
+## Sending-and-receiving-data
 Commands are sent to the server as strings followed by a newline (\n), encoded into raw binary bytes. You will simply connect with a tcp socket client and start sending commands to the server.
 <br>
 If the server requires a password, send the password in the same encoded format and with it a following (\n) newline to allow commands to be executed.
@@ -64,7 +81,7 @@ Because of the continuous data stream nature of the tcp socket, the rcon server 
 <br>
 The same applies for sending commands. You can send multiple commands separated by \n.
 
-## Command reference
+## Command-reference
 The basic structure is this:
 ```
 <command> <arguments,...>
@@ -319,7 +336,7 @@ The options object is an instance of [ClientOptions](#clientoptions). Look in th
 </dd>
 </dl>
 
-# Events
+## Events
 This library also provides multiple events for things happening on the server. Here is a list of events and their meanings:
 - "playerjoin", Emitted when a player joins the server. Arguments: Object<\Player>
 - "playerleft", Emitted when a player has left the server. Arguments: Object<\Player>
