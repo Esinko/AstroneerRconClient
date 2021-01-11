@@ -1,17 +1,14 @@
 {
   "name": "astroneer-rcon",
-  "version": "1.0.0",
-  "description": "A client for the Astroneer Rcon server built with Node.Js",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "version": "2.1.0",
+  "description": "A client for the Astroneer Rcon server built with Node.JS",
+  "main": "AstroneerRcon.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Esinko/AstroneerRconClient.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Esinko",
+  "license": "Licensed under the Apache License, Version 2.0 (see LICENSE file)",
   "bugs": {
     "url": "https://github.com/Esinko/AstroneerRconClient/issues"
   },
