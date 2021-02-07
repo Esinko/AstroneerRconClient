@@ -1,5 +1,5 @@
 # AstroneerRconClient
-<i><b>Version: 2.2.1</b></i>
+<i><b>Version: 2.2.2</b></i>
 <br>
 A client for the Astroneer Rcon server built with Node.JS
 
@@ -344,7 +344,10 @@ This library also provides multiple events for things happening on the server. H
 - "newplayer", Emitted when a new player joins the server. Arguments: Object<Player>
 - "save", Emitted when the game is saved. Arguments: Object<Save>
 - "setsave", Emitted when the active save changes. Arguments: Object<Save>
-This list does not include the "error" event. For more information see: [Errors and bugs](#Errors-and-bugs)
+- "connecting", Emitted when the client is connecting to the server. Arguments: None
+- "connected", Emitted when the client has connected to the server. Arguments: None
+- "disconnect", Emitted when the client has disconnected from the server. Arguments: None
+This list does not include the "error" event. For more information about that see: [Errors and bugs](#Errors-and-bugs)
 
 ## Functions
 List of functions in the Client class
