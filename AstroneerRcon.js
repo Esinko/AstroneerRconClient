@@ -461,7 +461,7 @@ class Client extends require("events").EventEmitter {
                     if(this._.queue[0] == self) this._.queue.splice(0,1) // Remove ourself from the queue
                     //Format: <prefix><command>\n
                     let encoded = Uint8Array.from(new Buffer.from(this.const.commandPrefix + data + "\n", "binary"))
-                    if(this._socket != null && this._.socket.writable == true){
+                    if(this._.socket.writable == true){
                         if(this._.handler != null){
                             // Add it to the queue
                             this._.queue.push(self)
