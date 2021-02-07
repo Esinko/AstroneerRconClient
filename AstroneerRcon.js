@@ -398,7 +398,8 @@ class Client extends require("events").EventEmitter {
                             }
                         }
                     })
-                    socket.on("close", async () => {
+                    socket.on("end", async () => {
+                        // Better than "close", because this triggers right after the FIN packet
                         this.emit("disconnect")
                         this.cons() // Restore to defaults
                     })
