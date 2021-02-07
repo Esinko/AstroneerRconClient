@@ -275,7 +275,7 @@ class Client extends require("events").EventEmitter {
                                         }, 2000)
                                     })
                                 }else {
-                                    this._error("Cache loope halted", null)
+                                    this._error("Cache loop halted", null)
                                 }
                             }
                             setTimeout(() => {
