@@ -437,6 +437,7 @@ class Client extends require("events").EventEmitter {
                     reject("Already disconnected")
                 }else {
                     this._.socket.destroy()
+                    this.cons() // Restore to defaults
                     this.emit("disconnect")
                     resolve()
                 }
