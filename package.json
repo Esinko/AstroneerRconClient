@@ -7,7 +7,11 @@
     "type": "git",
     "url": "git+https://github.com/Esinko/AstroneerRconClient.git"
   },
-  "author": "Esinko",
+  "author": {
+    "name": "Esinko",
+    "email": "dev@esinko.net",
+    "url": "https://github.com/Esinko"
+  },
   "license": "Licensed under the Apache License, Version 2.0 (see LICENSE file)",
   "bugs": {
     "url": "https://github.com/Esinko/AstroneerRconClient/issues"
