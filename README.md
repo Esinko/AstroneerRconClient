@@ -1,5 +1,5 @@
 # AstroneerRconClient
-<i><b>Version: 2.2.2</b></i>
+<i><b>Version: 2.2.3</b></i>
 <br>
 A client for the Astroneer Rcon server built with Node.JS
 
@@ -347,6 +347,7 @@ This library also provides multiple events for things happening on the server. H
 - "connecting", Emitted when the client is connecting to the server. Arguments: None
 - "connected", Emitted when the client has connected to the server. Arguments: None
 - "disconnect", Emitted when the client has disconnected from the server. Arguments: None
+- "timeout", The server did not respond in time. Will also emit an error. Arguments: None
 This list does not include the "error" event. For more information about that see: [Errors and bugs](#Errors-and-bugs)
 
 ## Functions
@@ -360,6 +361,20 @@ List of functions in the Client class
 
 ```
 <instance>.connect()
+```
+
+### .disconnect()
+<b>Use:</b> Disconnect from the server<br>
+<b>Returns:</b> Promise<\void><br>
+<b>Triggers events:</b> disconnect<br>
+<b>Usage:</b>
+
+```
+<instance>.disconnect().then(() => {
+    console.log("Disconnected!")
+}).catch((err) => {
+    console.log("Failed to disconnect:", err)
+})
 ```
 
 ### .listPlayers()

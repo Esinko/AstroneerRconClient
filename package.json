@@ -1,6 +1,6 @@
 {
   "name": "astroneer-rcon-client",
-  "version": "2.2.2",
+  "version": "2.2.3",
   "description": "A client for the Astroneer Rcon server built with Node.JS",
   "main": "AstroneerRcon.js",
   "repository": {

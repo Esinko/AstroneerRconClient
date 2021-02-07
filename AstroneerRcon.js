@@ -146,133 +146,137 @@ class Client extends require("events").EventEmitter {
                             // Start the loops
                             // Events: playerjoin, playerleft, newplayer, playercategory, save, newsave, setsave, deletesave, disconnect
                             this._.eventLoop = async () => {
-                                // Check players 
-                                this.sendRaw("ListGames\nDSListPlayers").then(async response => {
-                                    let players = response[1]
-                                    let saves = response[0]
-                                    // Parse the data
-                                    let newList = []
-                                    for(let i = 0; i < players.playerInfo.length; i++){
-                                        newList.push({
-                                            guid: players.playerInfo[i].playerGuid,
-                                            category: players.playerInfo[i].playerCategory,
-                                            name: players.playerInfo[i].playerName,
-                                            inGame: players.playerInfo[i].inGame,
-                                            index: players.playerInfo[i].index
-                                        })
-                                    }
-                                    players = newList
-                                    let active = saves.activeSaveName
-                                    let list = saves.gameList
-                                    newList = []
-                                    for(let i = 0; i < list.length; i++){
-                                        // Parse each entry in the list
-                                        let save = list[i]
-                                        // Create date obj
-                                        let dateObj = new Date()
-                                        dateObj.setFullYear(save.date.split(".")[0])
-                                        dateObj.setMonth(save.date.split(".")[1].startsWith("0") ? parseInt(save.date.split(".")[1].split("")[1])-1 : parseInt(save.date.split(".")[1])-1)
-                                        dateObj.setHours(parseInt(save.date.split("-")[1].split(".")[0])+2) // Why does this register as 2 behind...?
-                                        dateObj.setMinutes(save.date.split("-")[1].split(".")[1])
-                                        dateObj.setSeconds(save.date.split("-")[1].split(".")[2])
-                                        // Push the new list
-                                        let c = {
-                                            name: save.name,
-                                            lastEdited: dateObj,
-                                            creative: save.bHasBeenFlaggedAsCreativeModeSave,
-                                            index: i
+                                // Get players and saves
+                                if(this._.socket.writable == true){
+                                    this.sendRaw("ListGames\nDSListPlayers").then(async response => {
+                                        let players = response[1]
+                                        let saves = response[0]
+                                        // Parse the data
+                                        let newList = []
+                                        for(let i = 0; i < players.playerInfo.length; i++){
+                                            newList.push({
+                                                guid: players.playerInfo[i].playerGuid,
+                                                category: players.playerInfo[i].playerCategory,
+                                                name: players.playerInfo[i].playerName,
+                                                inGame: players.playerInfo[i].inGame,
+                                                index: players.playerInfo[i].index
+                                            })
                                         }
-                                        newList.push(c)
-                                        if(save.name == active) active = c
-                                    }
-                                    // Active save has never been loaded
-                                    if(typeof active == "string"){
-                                        active = {
-                                            name: active,
-                                            lastEdited: null,
-                                            creative: null,
-                                            index: null
+                                        players = newList
+                                        let active = saves.activeSaveName
+                                        let list = saves.gameList
+                                        newList = []
+                                        for(let i = 0; i < list.length; i++){
+                                            // Parse each entry in the list
+                                            let save = list[i]
+                                            // Create date obj
+                                            let dateObj = new Date()
+                                            dateObj.setFullYear(save.date.split(".")[0])
+                                            dateObj.setMonth(save.date.split(".")[1].startsWith("0") ? parseInt(save.date.split(".")[1].split("")[1])-1 : parseInt(save.date.split(".")[1])-1)
+                                            dateObj.setHours(parseInt(save.date.split("-")[1].split(".")[0])+2) // Why does this register as 2 behind...?
+                                            dateObj.setMinutes(save.date.split("-")[1].split(".")[1])
+                                            dateObj.setSeconds(save.date.split("-")[1].split(".")[2])
+                                            // Push the new list
+                                            let c = {
+                                                name: save.name,
+                                                lastEdited: dateObj,
+                                                creative: save.bHasBeenFlaggedAsCreativeModeSave,
+                                                index: i
+                                            }
+                                            newList.push(c)
+                                            if(save.name == active) active = c
                                         }
-                                        newList.push(active)
-                                    }
-                                    saves = {
-                                        active: active,
-                                        list: newList
-                                    }
-
-                                    // Update players
-                                    if(this._.eventCache.players == null){
-                                        this._.eventCache.players = players
-                                    }else {
-                                        let copy = players.slice(0)
-                                        for(let i = 0; i < players.length; i++){
-                                            let player = players[i]
-                                            for(let ii = 0; ii < this._.eventCache.players.length; ii++){
-                                                let cachePlayer = this._.eventCache.players[ii]
-                                                if(player.guid == cachePlayer.guid){
-                                                    copy[cachePlayer.index] = null
-                                                    // Handle changes
-                                                    if(cachePlayer.inGame === true && player.inGame === false){
-                                                        this.emit("playerleft", player)
-                                                    }else if(cachePlayer.inGame === false && player.inGame === true){
-                                                        this.emit("playerjoin", player)
-                                                    }
-                                                    if(cachePlayer.category == player.category){
-                                                        this.emit("playercategory", player)
+                                        // Active save has never been loaded
+                                        if(typeof active == "string"){
+                                            active = {
+                                                name: active,
+                                                lastEdited: null,
+                                                creative: null,
+                                                index: null
+                                            }
+                                            newList.push(active)
+                                        }
+                                        saves = {
+                                            active: active,
+                                            list: newList
+                                        }
+    
+                                        // Update players
+                                        if(this._.eventCache.players == null){
+                                            this._.eventCache.players = players
+                                        }else {
+                                            let copy = players.slice(0)
+                                            for(let i = 0; i < players.length; i++){
+                                                let player = players[i]
+                                                for(let ii = 0; ii < this._.eventCache.players.length; ii++){
+                                                    let cachePlayer = this._.eventCache.players[ii]
+                                                    if(player.guid == cachePlayer.guid){
+                                                        copy[cachePlayer.index] = null
+                                                        // Handle changes
+                                                        if(cachePlayer.inGame === true && player.inGame === false){
+                                                            this.emit("playerleft", player)
+                                                        }else if(cachePlayer.inGame === false && player.inGame === true){
+                                                            this.emit("playerjoin", player)
+                                                        }
+                                                        if(cachePlayer.category == player.category){
+                                                            this.emit("playercategory", player)
+                                                        }
                                                     }
                                                 }
                                             }
+                                            // Handle new players
+                                            for(let i = 0; i < copy.length; i++){
+                                                if(copy[i] == null) continue
+                                                this.emit("newplayer", copy[i])
+                                            }
+                                            this._.eventCache.players = players
                                         }
-                                        // Handle new players
-                                        for(let i = 0; i < copy.length; i++){
-                                            if(copy[i] == null) continue
-                                            this.emit("newplayer", copy[i])
-                                        }
-                                        this._.eventCache.players = players
-                                    }
-                                    // Update saves
-                                    if(this._.eventCache.saves == null){
-                                        this._.eventCache.saves = saves
-                                    }else {
-                                        let copy = this._.eventCache.saves
-                                        copy.list = this._.eventCache.saves.list.slice(0)
-                                        let cacheCopy = saves.list.slice(0)
-                                        // Handle modified save
-                                        for(let i = 0; i < saves.list.length; i++){
-                                            let save = saves.list[i]
-                                            for(let ii = 0; ii < copy.list.length; ii++){
-                                                let cacheSave = copy.list[ii]
-                                                if(cacheSave == null) continue
-                                                if(save.name == cacheSave.name){
-                                                    copy.list[ii] = null
-                                                    cacheCopy[i] = null
-                                                    if(save.lastEdited != null && cacheSave.lastEdited != null && save.lastEdited.toUTCString() != cacheSave.lastEdited.toUTCString()){
-                                                        this.emit("save", save)
+                                        // Update saves
+                                        if(this._.eventCache.saves == null){
+                                            this._.eventCache.saves = saves
+                                        }else {
+                                            let copy = this._.eventCache.saves
+                                            copy.list = this._.eventCache.saves.list.slice(0)
+                                            let cacheCopy = saves.list.slice(0)
+                                            // Handle modified save
+                                            for(let i = 0; i < saves.list.length; i++){
+                                                let save = saves.list[i]
+                                                for(let ii = 0; ii < copy.list.length; ii++){
+                                                    let cacheSave = copy.list[ii]
+                                                    if(cacheSave == null) continue
+                                                    if(save.name == cacheSave.name){
+                                                        copy.list[ii] = null
+                                                        cacheCopy[i] = null
+                                                        if(save.lastEdited != null && cacheSave.lastEdited != null && save.lastEdited.toUTCString() != cacheSave.lastEdited.toUTCString()){
+                                                            this.emit("save", save)
+                                                        }
                                                     }
                                                 }
                                             }
+                                            // Handle active save
+                                            //console.log(this._.eventCache.saves.active, saves.active)
+                                            if(this._.eventCache.saves.active.name != saves.active.name){
+                                                this.emit("setsave", saves.active)
+                                            }
+                                            // Handle deleted saves
+                                            for(let i = 0; i < cacheCopy.length; i++){
+                                                if(cacheCopy[i] == null) continue
+                                                this.emit("newsave", cacheCopy[i])
+                                            }
+                                            // Handle new saves
+                                            for(let i = 0; i < copy.list.length; i++){
+                                                if(copy.list[i] == null) continue
+                                                this.emit("deletesave", copy.list[i])
+                                            }
+                                            this._.eventCache.saves = saves
                                         }
-                                        // Handle active save
-                                        //console.log(this._.eventCache.saves.active, saves.active)
-                                        if(this._.eventCache.saves.active.name != saves.active.name){
-                                            this.emit("setsave", saves.active)
-                                        }
-                                        // Handle deleted saves
-                                        for(let i = 0; i < cacheCopy.length; i++){
-                                            if(cacheCopy[i] == null) continue
-                                            this.emit("newsave", cacheCopy[i])
-                                        }
-                                        // Handle new saves
-                                        for(let i = 0; i < copy.list.length; i++){
-                                            if(copy.list[i] == null) continue
-                                            this.emit("deletesave", copy.list[i])
-                                        }
-                                        this._.eventCache.saves = saves
-                                    }
-                                    setTimeout(() => {
-                                        if(typeof this._.eventLoop == "function") this._.eventLoop()
-                                    }, 2000)
-                                })
+                                        setTimeout(() => {
+                                            if(typeof this._.eventLoop == "function") this._.eventLoop()
+                                        }, 2000)
+                                    })
+                                }else {
+                                    this._error("Socket not writable", null)
+                                }
                             }
                             setTimeout(() => {
                                 this._.eventLoop()
@@ -423,6 +427,24 @@ class Client extends require("events").EventEmitter {
     }
 
     /**
+     * Disconnect from the server.
+     */
+    async disconnect(){
+        return new Promise((resolve, reject) => {
+            if(this._.socket != null){
+                if(this._.socket.destroyed == true){
+                    reject("Already disconnected")
+                }else {
+                    this._.socket.destroy()
+                    resolve()
+                }
+            }else {
+                reject("No active socket to destroy")
+            }
+        })
+    }
+
+    /**
      * Send raw string data encoded to a Uint8Array to the socket
      * @param {String} data The string data to be sent and encoded
      * @param {Boolean} notJson The expected response does not contain json
@@ -478,6 +500,7 @@ class Client extends require("events").EventEmitter {
                                     let t = setTimeout(async () => {
                                         if(cleared != false) return
                                         this._error("Server timeout", new Error("Timeout"))
+                                        this.emit("timeout")
                                     }, this.timeout)
                                 }
                             })
