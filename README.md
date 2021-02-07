@@ -159,9 +159,9 @@ In short. If you are using AstroLauncher you need to create a new instance of th
 In this quickstart we will be using the Client class, but you may switch it by changing the end of the first line to ``.link``, instead of ``.client``.
 
 ## Step 1
-First you need to download the library. You can do it using NPM:
+First you need to download the library. You can do it with NPM (<a href="https://www.npmjs.com/package/astroneer-rcon-client">astroneer-rcon-client</a><i>, clone of this repo</i>):
 ```
-npm install Esinko/AstroneerRcon
+npm install astroneer-rcon-client
 ```
 
 Then you need to import the CommonJs module, you can do that with:
