@@ -25,11 +25,12 @@ class Client extends require("events").EventEmitter {
 
     /**
      * The client options object
-     * @typedef {{ip: String, port: Number, password?: String, timeout?: Number}} ClientOptions
+     * @typedef {{ip: String, port: Number, password?: String, timeout?: Number, delivery_delay?: Number}} ClientOptions
      * @property {String} ip The IP-address to connect to
      * @property {Number} port The port number the server is listening for rcon
      * @property {String} password The rcon password, leave empty if the server does not require an rcon password
      * @property {Number} timeout The timeout limit in ms. If not set, will default to 15000
+     * @property {Number} delivery_delay The possible delay while starting and ending a "packet". A "packet" can arrive in multiple parts. This value is the amount of time to wait for the next part of the "packet". By default 90(ms).
      */
     
     /**
@@ -77,6 +78,7 @@ class Client extends require("events").EventEmitter {
             this.port = options.port
             this.password = options.password
             this.timeout = options.timeout != undefined ? options.timeout : 15000
+            this.delivery_delay = options.delivery_delay != undefined ? options.delivery_delay : 90
             // Libraries
             this.net = require("net")
             // Internal memory object
@@ -268,7 +270,7 @@ class Client extends require("events").EventEmitter {
                                         this._.eventCache.saves = saves
                                     }
                                     setTimeout(() => {
-                                        this._.eventLoop()
+                                        if(typeof this._.eventLoop == "function") this._.eventLoop()
                                     }, 2000)
                                 })
                             }
@@ -294,8 +296,9 @@ class Client extends require("events").EventEmitter {
                     // Socket event handlers
                     let tmpCache = ""
                     let waiting = false
+                    let closed = false
+                    let ig = 0
                     let processCache = async (data) => {
-                        waiting = false
                         // Parse the data
                         let st = new String(data)
                         data = st.split("\r\n")
@@ -335,20 +338,60 @@ class Client extends require("events").EventEmitter {
                         }else {
                             this._error("Received an unexpected packet", new Error(JSON.stringify(data)))
                         }
+                        // Reset listener state variables
+                        waiting = false
+                        closed = false
+                        tmpCache = ""
+                    }
+                    let processDelay = async () => {
+                        // Ok, here we think we got the end of the packet right? No. If 2 packets were requested, we need to merge them as well or if the packet in itself has \r\n in it and happens to split by that (quite unlikely, but possible).
+                        // So here we wait a predefined delay of 90ms or an interval provided by the user. The longer this delay is the longer processing of a "packet" will take.
+                        // Less delay = better
+                        waiting = true
+                        setTimeout(async () => {
+                            if(ig != 0){
+                                --ig
+                            }else {
+                                closed = true
+                                processCache(tmpCache)
+                            }
+                        }, this.delivery_delay)
                     }
                     socket.on("data", async data => {
                         // Sometimes the packet can actually arrive in 2 packets
                         // Which really makes no sense, but this hacky fix will do
                         // Here we basically just wait 90ms after a packet has arrived
                         // If another packet comes in within that 90ms window, it will be merged with the first packet
-                        if(waiting == false){ // This means we or not in ^that 90ms windows of merging packets
-                            waiting = true
-                            tmpCache = data
-                            setTimeout(async () => {
-                                processCache(tmpCache)
-                            }, 90)
+                        // --- Old way of "packet" merging
+                        //if(waiting == false){ // This means we or not in ^that 90ms windows of merging packets
+                        //    waiting = true
+                        //    tmpCache = data
+                        //    setTimeout(async () => {
+                        //        processCache(tmpCache)
+                        //    }, 90)
+                        //}else {
+                        //    tmpCache = tmpCache + data
+                        //}
+                        // --- New and better way ---
+                        data = data.toString() // Just to make sure this is a string and not a buffer
+                        if(tmpCache == "") tmpCache = data;
+                        else tmpCache = tmpCache + data
+                        if(waiting == false){
+                            if(tmpCache.endsWith("\r\n")){
+                                processDelay()
+                            }
                         }else {
-                            tmpCache = tmpCache + data
+                            // We are already waiting
+                            if(closed == true){
+                                // Packet came in too late and was dropped
+                                this._error("Packet arrived too late and was dropped. Please increase delivery_delay.", new Error(data))
+                            }else {
+                                // The packet was merged, restart the delay
+                                ++ig // The next delay trigger should be skipped.
+                                //There may be a possible race condition here that the new delay timer gets skipped, 
+                                //if the instruction before this is to check the ig value in the old delay timer. Then stuff will just break badly.
+                                processDelay()
+                            }
                         }
                     })
                     socket.on("close", async () => {
@@ -1017,313 +1060,11 @@ class Client extends require("events").EventEmitter {
  * 
  * As there can be only one rcon client connected to the server at once and AstroLauncher automatically occupies that socket.
  */
-class Link extends require("events").EventEmitter {
-    // ------------------------------------------------------------------------------------------------------------------------------------------------
-    // Custom type definitions
-    // ------------------------------------------------------------------------------------------------------------------------------------------------
-
-    /**
-     * The link client options object
-     * @typedef {{ip: String, port: Number, password?: String, timeout?: Number}} ClientOptions
-     * @property {String} ip The IP-address to connect to
-     * @property {Number} port The port number the server is listening for rcon
-     * @property {String} password The Astrolauncher password
-     */
-    
-    /**
-     * A query object to search for players
-     * @typedef {{guid?: String, name?: String, index?: Number}} PlayerQuery
-     * @property {String} guid A player guid. This is a string id unique for each player, which never changes
-     * @property {String} name The player name
-     * @property {Number} index The player index (in the known players list)
-     */
-
-    /**
-     * A player category string
-     * @typedef {"Unlisted"|"Blacklisted"|"Whitelisted"|"Admin"|"Pending"|"Owner"} PlayerCategory Player category
-     * - Unlisted = No permissions, blocked by whitelist if enabled
-     * - Blacklisted = Same as banned
-     * - Whitelisted = No permissions, allowed by whitelist if enabled
-     * - Admin = Max permissions possible for anyone but the owner
-     * - Pending = Not yet set, will be automatically set to Unlisted on next connect if not changed by then
-     * - Owner = The owner, all permissions
-     */
-
-    /**
-     * Creative save configuration
-     * @typedef {{fuel: Boolean, invincible: Boolean, hazards: Boolean, oxygen: Boolean, backpackpower: Boolean}} CreativeConfig Save's creative configuration
-     * @property {Boolean} fuel Should fuel consumption be enabled?
-     * @property {Boolean} invincible Should invincibility be enabled?
-     * @property {Boolean} hazards Should hazards be enabled?
-     * @property {Boolean} oxygen Should oxygen system be enabled?
-     * @property {Boolean} backpackpower Should the backpack power limit be enabled?
-     */
-
-    // ------------------------------------------------------------------------------------------------------------------------------------------------
-    // Basic socket operations
-    // ------------------------------------------------------------------------------------------------------------------------------------------------
-
-    /**
-     * Create a new rcon client instance
-     * @param {ClientOptions} options The client options
-     */
-    constructor(options){
-        super()
-        this.cons = () => {
-            // Constructor parameters
-            this.ip = options.ip
-            this.port = options.port
-            this.password = options.password
-            // Libraries
-            this.http = require("http")
-            this.https = require("https")
-            // Internal memory object
-            this._ = {
-                queue: [], // The request queue
-                handler: null, // The current response callback handler
-                socket: null, // The socket
-                eventLoop: null,
-                eventLoopState: null,
-                eventCache: {
-                    saves: null,
-                    players: null
-                }
-            }
-            // Static regex values
-            this.regex = {
-                ip: /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/g,
-                port: /^([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$/g
-            }
-            // General constants
-            this.const = {
-                permissionCategories: ["Unlisted", "Blacklisted", "Whitelisted", "Admin", "Pending", "Owner"], // Pending is just empty?
-                commandPrefix: "DS"
-            }
-        }
-        this.cons()
-    }
-
-    /**
-     * Handle an internal error
-     * @param {String} message The message to be included with the error
-     * @param {Error} err The error
-     */
-    async _error(message, error){
-        try {
-            
-        }
-        catch(err_){
-            throw err_
-        }
-    }
-
-    /**
-     * Connect to the server. Emits the "connecting" event when ran and "connected" event when connected to the server.
-     */
-    async connect(){
-        try {
-            
-        }
-        catch(err){
-            this._error("Internal error", err)
-        }
-    }
-
-
-    // ------------------------------------------------------------------------------------------------------------------------------------------------
-    // Commands
-    // ------------------------------------------------------------------------------------------------------------------------------------------------
-
-    /**
-     * List all the players known to the server
-     * State: Stable
-     */
-    async listPlayers(){
-        return new Promise((resolve) => {
-            
-        })
-    }
-    
-    /**
-     * Get a specific player by guid, index or name
-     * @param {PlayerQuery} options The player query options
-     */
-    async getPlayer(options){
-        return new Promise((resolve, reject) => {
-            
-        })
-    }
-
-    /**
-     * Kick a player from the game
-     * @param {PlayerQuery} player The player query options
-     * State: Stable 
-     */
-    async kick(player){
-        return new Promise((resolve, reject) => {
-            
-        })
-    }
-
-    /**
-     * Kick all players from the server
-     * State: Unstable
-     */
-    async kickAll(){
-        return new Promise((resolve) => {
-            
-        })
-    }
-
-    /**
-     * Set a players category (also know as permission level)
-     * @param {PlayerQuery} player The player query options
-     * @param {PlayerCategory} category The category to apply
-     * State: Stable (limitations)
-     */
-    async setPlayerCategory(player, category){
-        return new Promise((resolve, reject) => {
-            
-        })
-    }
-
-    /**
-     * Get the save information, such as active save and list of available saves
-     * State: Stable
-     */
-    async listSaves(){
-        return new Promise((resolve) => {
-            
-        })
-    }
-
-    /**
-     * Save the game
-     * @param {String} name (This parameter is optional!) Set the name of the new save
-     * State: Unstable
-     */
-    async save(name){
-        return new Promise((resolve, reject) => {
-            
-        })
-    }
-    
-    /**
-     * Shutdown the server
-     * @param {Boolean} force Force the server shutdown without saving
-     * State: Stable
-     */
-    async shutdown(force){
-        return new Promise((resolve) => {
-            
-        })
-    }
-
-    /**
-     * Load a new save in the server
-     * @param {String} name The name of the save
-     * State: Stable
-     */
-    async setSave(name){
-        return new Promise((resolve, reject) => {
-            
-        })
-    }
-
-    /**
-     * Rename a save
-     * @param {String} name The save to rename
-     * @param {String} newname The name to apply
-     */
-    async renameSave(name, newname){
-        return new Promise((resolve, reject) => {
-            reject("This function is currently not functional, because of a bug in the dedicated server.")
-        })
-    }
-
-    /**
-     * Delete a save
-     * @param {String} name The name of the save
-     */
-    async deleteSave(name){
-        return new Promise((resolve, reject) => {
-            reject("This function is currently not functional, because of a bug in the dedicated server.")
-        })
-    }
-
-    /**
-     * Set the interval to autosave at
-     * @param {Number} ms The time in ms
-     */
-    async setSaveInternal(ms){
-        return new Promise((resolve, reject) => {
-            reject("This function is currently not functional, because of a bug in the dedicated server.")
-        })
-    }
-
-    /**
-     * Set the server password, leave empty to disable it
-     * @param {String} password The password string
-     */
-    async setPassword(password){
-        return new Promise((resolve, reject) => {
-            reject("This function is currently not functional, because of a bug in the dedicated server.")
-        })
-    }
-
-    /**
-     * Set the activity timeout for the server
-     * @param {Number} ms The time in ms
-     */
-    async setActivityTimeout(ms){
-        return new Promise((resolve, reject) => {
-            reject("This function is currently not functional, because of a bug in the dedicated server.")
-        })
-    }
-
-    /**
-     * Enable or modify creative setting for the currently loaded game
-     * @param {CreativeConfig} options The creative configuration
-     */
-    async setCreative(options){
-        return new Promise((resolve, reject) => {
-            reject("This function is currently not functional, because of a bug in the dedicated server.")
-        })
-    }
-
-    /**
-     * Create a new save
-     * @param {String} name The name of the save
-     * @param {Boolean} activate Should the new save be set as active
-     * State: Stable (sometimes causes client crashes)
-     */
-    async createSave(name, activate){
-        return new Promise((resolve, reject) => {
-            
-        })
-    }
-
-    /**
-     * Enable or disable the whitelist
-     * @param {Boolean} boolean The state for the 
-     */
-    async setWhitelist(boolean){
-        return new Promise((resolve, reject) => {
-            
-        })
-    }
-
-    /**
-     * Get general information about the server
-     * State: Stable
-     */
-    async getInfo(){
-        return new Promise((resolve) => {
-            
-        })
+class Link {
+    async plc(){
+        return false
     }
 }
-
 module.exports = {
     client: Client,
     link: Link

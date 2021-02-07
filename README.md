@@ -1,5 +1,5 @@
 # AstroneerRconClient
-<i><b>Version: 2.1</b></i>
+<i><b>Version: 2.2</b></i>
 <br>
 A client for the Astroneer Rcon server built with Node.JS
 
@@ -259,6 +259,7 @@ In markdown:
     <dd><p>Property: port,<br>Type: Number,<br>Description: The port number the server is listening for rcon</p></dd>
     <dd><p>Property: password,<br>Type: String,<br>Description: The rcon password, leave empty if the server does not require an rcon password</p></dd>
     <dd><p>Property: timeout,<br>Type: Number,<br>Description: The timeout limit in ms. If not set, will default to 15000</p></dd>
+    <dd><p>Property: delivery_delay,<br>Type: Number,<br>Description: The possible delay while starting and ending a "packet". A "packet" can arrive in multiple parts This value is the amount of time to wait for the next part of the "packet". By default 90(ms).</p></dd>
 </dl>
 
 ### PlayerQuery
@@ -338,12 +339,12 @@ The options object is an instance of [ClientOptions](#clientoptions). Look in th
 
 ## Events
 This library also provides multiple events for things happening on the server. Here is a list of events and their meanings:
-- "playerjoin", Emitted when a player joins the server. Arguments: Object<\Player>
-- "playerleft", Emitted when a player has left the server. Arguments: Object<\Player>
-- "newplayer", Emitted when a new player joins the server. Arguments: Object<\Player>
-- "save", Emitted when the game is saved. Arguments: Object<\Save>
-- "setsave", Emitted when the active save changes. Arguments: Object<\Save>
-This list does not include the "error" event. For more information see: (Errors and bugs)[errors-and-bugs]
+- "playerjoin", Emitted when a player joins the server. Arguments: Object<Player>
+- "playerleft", Emitted when a player has left the server. Arguments: Object<Player>
+- "newplayer", Emitted when a new player joins the server. Arguments: Object<Player>
+- "save", Emitted when the game is saved. Arguments: Object<Save>
+- "setsave", Emitted when the active save changes. Arguments: Object<Save>
+This list does not include the "error" event. For more information see: [Errors and bugs](#Errors-and-bugs)
 
 ## Functions
 List of functions in the Client class
@@ -452,7 +453,7 @@ console.log(savesList) // Will contain the active save and then a saves array as
 ```
 
 ### .renameSave(name, newname)
-<b>This function is not yet implemented, due to the limitations of the server.</b>
+<b>This function is not yet implemented, due to the limitations of the server.</b><br>
 <b>Use:</b> Rename a save<br>
 <b>Returns:</b> none<br>
 <b>Triggers events:</b> none<br>
@@ -462,7 +463,7 @@ none
 ```
 
 ### .deleteSave(name)
-<b>This function is not yet implemented, due to the limitations of the server.</b>
+<b>This function is not yet implemented, due to the limitations of the server.</b><br>
 <b>Use:</b> Delete a save<br>
 <b>Returns:</b> none<br>
 <b>Triggers events:</b> none<br>
@@ -472,7 +473,7 @@ none
 ```
 
 ### .setSaveInterval(ms)
-<b>This function is not yet implemented, due to the limitations of the server.</b>
+<b>This function is not yet implemented, due to the limitations of the server.</b><br>
 <b>Use:</b> Set the autosave interval<br>
 <b>Returns:</b> none<br>
 <b>Triggers events:</b> none<br>
@@ -482,7 +483,7 @@ none
 ```
 
 ### .setPassword(password)
-<b>This function is not yet implemented, due to the limitations of the server.</b>
+<b>This function is not yet implemented, due to the limitations of the server.</b><br>
 <b>Use:</b> Set the server password<br>
 <b>Returns:</b> none<br>
 <b>Triggers events:</b> none<br>
@@ -492,7 +493,7 @@ none
 ```
 
 ### .setActivityTimeout()
-<b>This function is not yet implemented, due to the limitations of the server.</b>
+<b>This function is not yet implemented, due to the limitations of the server.</b><br>
 <b>Use:</b> Set the player activity/idle timeout<br>
 <b>Returns:</b> none<br>
 <b>Triggers events:</b> none<br>
@@ -502,7 +503,7 @@ none
 ```
 
 ### .setCreative(options: [CreativeConfig](#creativeconfig))
-<b>This function is not yet implemented, due to the limitations of the server.</b>
+<b>This function is not yet implemented, due to the limitations of the server.</b><br>
 <b>Use:</b> Make the active save a creative save (one time use).<br>
 <b>Returns:</b> none<br>
 <b>Triggers events:</b> none<br>
