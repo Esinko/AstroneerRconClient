@@ -139,6 +139,7 @@ class Client extends require("events").EventEmitter {
                     let socket = new this.net.Socket() // Just because I'm lazy
                     this._.socket = socket
                     this.emit("connecting")
+                    socket.setTimeout(this.timeout)
                     // Trigger connect
                     socket.connect(this.port, this.ip, async () => {
                         // Do we have a password?
@@ -270,6 +271,8 @@ class Client extends require("events").EventEmitter {
                                             }
                                             this._.eventCache.saves = saves
                                         }
+
+                                        // Loop
                                         setTimeout(() => {
                                             if(typeof this._.eventLoop == "function") this._.eventLoop()
                                         }, 2000)
@@ -348,8 +351,9 @@ class Client extends require("events").EventEmitter {
                         tmpCache = ""
                     }
                     let processDelay = async () => {
-                        // Ok, here we think we got the end of the packet right? No. If 2 packets were requested, we need to merge them as well or if the packet in itself has \r\n in it and happens to split by that (quite unlikely, but possible).
-                        // So here we wait a predefined delay of 90ms or an interval provided by the user. The longer this delay is the longer processing of a "packet" will take.
+                        // Ok, here we think we got the end of the packet right? No. If 2 packets were requested, 
+                        // we need to merge them as well or if the packet in itself has \r\n in it and happens to split by that (quite unlikely, but possible).
+                        // So here we wait a predefined delay of 90ms or a timeout provided by the user. The longer this delay is the longer processing of a "packet" will take.
                         // Less delay = better
                         waiting = true
                         setTimeout(async () => {
@@ -400,18 +404,23 @@ class Client extends require("events").EventEmitter {
                     })
                     socket.on("end", async () => {
                         // Better than "close", because this triggers right after the FIN packet
-                        this.emit("disconnect")
+                        socket.destroy()
                         this.cons() // Restore to defaults
+                        this.emit("disconnect")
                     })
                     socket.on("error", async error => {
                         // Destroy the socket and handle the error
                         try {
-                            this.emit("disconnect")
                             socket.destroy()
                             this.cons() // Restore to defaults
+                            if(error.message.includes("ETIMEDOUT")){
+                                this.emit("timeout")
+                            }else {
+                                this.emit("disconnect")
+                            }
                         }
                         catch(err){
-                            this._error("Failed to destroy socket", err)
+                            this._error("Failed to destroy socket on error", err)
                         }
                         this._error("Socket error", error)
                     })
@@ -1060,7 +1069,7 @@ class Client extends require("events").EventEmitter {
                             owner: owner,
                             maxPlayers: response.maxInGamePlayers,
                             onlinePlayers: response.playersInGame,
-                            knownPlayers: response.playersKnownToGame,
+                            knownPlayers: players.length, //response.playersKnownToGame, // Value given by the response seems to always be 0, so let's figure it out by other means
                             save: save.active,
                             timePlayed: response.secondsInGame,
                             name: response.serverName,

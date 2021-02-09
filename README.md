@@ -167,7 +167,7 @@ npm install astroneer-rcon-client
 Then you need to import the CommonJs module, you can do that with:
 
 ```
-const AstroneerRcon = require("astroneer-rcon").client
+const AstroneerRcon = require("astroneer-rcon-client").client
 // Tip: If we are operating in the same directory replace the variable in the file path with a dot (.), or if AstroneerRcon is in a folder in your projects working directory. You may use ./<The folder you installed this lib with>/AstroneerRcon.js
 ```
 If AstroneerRcon is undefined, or you get an error, make sure your filepath is correct.
@@ -182,7 +182,7 @@ AstroneerRcon is event driven. You can register listeners for multiple things ha
 There are a few good ones to include, like "connected" and "error".
 
 ```
-const AstroneerRcon = require("astroneer-rcon").client
+const AstroneerRcon = require("astroneer-rcon-client").client
 let myInstance = new client({
     // Here is the important part, the client configuration.
     ip: "127.0.0.1", // Your server ip
@@ -214,7 +214,7 @@ To execute commands, refer to the Client class functions list. Which can be foun
 Here we simply get some basic data about the server.
 
 ```
-const AstroneerRcon = require("astroneer-rcon").client
+const AstroneerRcon = require("astroneer-rcon-client").client
 let myInstance = new client({
     // Here is the important part, the client configuration.
     ip: "127.0.0.1", // Your server ip
