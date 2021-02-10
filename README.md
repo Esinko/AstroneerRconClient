@@ -1,5 +1,5 @@
 # AstroneerRconClient
-<i><b>Version: 2.2.6</b></i>
+<i><b>Version: 2.2.7</b></i>
 <br>
 A client for the Astroneer Rcon server built with Node.JS
 
@@ -105,9 +105,9 @@ The (?) symbol in the description means that the use case of the function is unk
 | DSRemoveFavorite | \<ServerUrl>(String, \<ip>:\<port>) | (?) Unknown | No | Unknown
 | DSAddFavorite | \<ServerUrl>(String, \<ip>:\<port>) \<NickName>(String) | (?) Unknown | No | Unknown
 | DSGetFavoritesList | None | (?) Unknown | No | Unknown
-| DSClearRecentsList() | None | (?) Unknown | No | Unknown
-| DSGetRecentsList() | None | (?) Unknown | No | Unknown
-| DSBackupSaveGames() | None | (?) Backup the servers saves | No | Unknown
+| DSClearRecentsList | None | (?) Unknown | No | Unknown
+| DSGetRecentsList | None | (?) Unknown | No | Unknown
+| DSBackupSaveGames | None | (?) Backup the servers saves | No | Unknown
 | DSSetBackupSaveGamesInterval | \<Seconds>(Number) | (?) Set the backup interval in seconds | No | Unknown
 | DSSetPlayerCategoryForPlayerName | \<PlayerName>(String) \<Category>(String, PlayerCategory) | Set a player's category based on the player's name. See the type definition of PlayerCategory for more details on what the Category argument can be. | Yes | Unknown
 | DSSetPlayerCategory | \<Player>(String?) \<Category>(String, PlayerCategory) \<Index>(Number?) | (?) Set a player's category based on the player object? | No | Unknown
