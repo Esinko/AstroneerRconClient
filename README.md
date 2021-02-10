@@ -1,5 +1,5 @@
 # AstroneerRconClient
-<i><b>Version: 2.2.5</b></i>
+<i><b>Version: 2.2.6</b></i>
 <br>
 A client for the Astroneer Rcon server built with Node.JS
 
@@ -243,9 +243,9 @@ That's pretty much all there is to know about the basic usage of this library.
 Refer to the Client class section for more details on what you can do with this library!
 
 # Client-class
-The client class is where the rcon client lives. It contains all the commands you can execute against the server and it formats the data for easier usage across application.
+The client class is where the rcon client lives. It contains all the commands you can execute against the server and it formats the data for easier usage.
 <br>
-Such as handling dates better and building cleaner response objects.
+Such as handling dates better (as JavasScript Date objects) and building cleaner response objects.
 
 ## Type-definitions
 These are written using JSDoc.

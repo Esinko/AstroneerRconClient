@@ -1,8 +1,9 @@
 {
   "name": "astroneer-rcon-client",
-  "version": "2.2.5",
-  "description": "A client for the Astroneer Rcon server built with Node.JS",
+  "version": "2.2.6",
+  "description": "A Remote console client for the Astroneer Dedicated server built with Node.JS",
   "main": "AstroneerRcon.js",
+  "keywords": ["astroneer", "rcon", "dedicated-server", "remote console", "Astroneer", "Node.js", "self-host", "open source"],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Esinko/AstroneerRconClient.git"
