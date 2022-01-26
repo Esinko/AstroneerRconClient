@@ -1,10 +1,10 @@
 # AstroneerRconClient
-<i><b>Version: 2.2.8</b></i>
+<i><b>Version: 2.2.9</b></i>
 <br>
 A client for the Astroneer RCON server built with Node.JS
 <br>
-*NOTE*: This library might no longer work with the latest RCON server versions and is outdated in Node.js's best practices.
-        This library should be mainly used as an example of how to build your own RCON client for the Astroneer Dedicated server.^
+**NOTE**: This library might no longer work with the latest RCON server versions and is outdated in Node.js's best practices.
+        This library should be mainly used as an example of how to build your own RCON client for the Astroneer Dedicated server.
         If you have questions, you can reach me via email `eemil@esinko.net`.
 
 # Table of contents
