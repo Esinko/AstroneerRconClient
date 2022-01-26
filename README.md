@@ -1,5 +1,5 @@
 # AstroneerRconClient
-<i><b>Version: 2.2.7</b></i>
+<i><b>Version: 2.2.8</b></i>
 <br>
 A client for the Astroneer Rcon server built with Node.JS
 
@@ -43,7 +43,7 @@ First to enable rcon for a server, set the ConsolePort value in the AstroServerS
 It is also recommended to set ConsolePassword to a random secure password, that the rcon client will use to connect.
 
 ## What is it?
-It is simply a tcp socket server that accepts one client to connect. This server will listen and respond with data depending on client requests as it is the socket continuous duplex stream.
+It is simply a tcp socket server that accepts one client to connect.
 
 ## Before we continue...
 Here is some stuff you need to know before reading this:
@@ -77,7 +77,7 @@ Now it's important to understand a key difference between commands with response
 return a standard response JSON object. If the command "has" data, which means you're requesting some data from the server, it will contain a command specific JSON response object.
 As an example "DSListPlayers" will return a JSON object, which has a "playerInfo" array, which contains information about each known player with it's command specific structure.
 <br>
-Because of the continuous data stream nature of the tcp socket, the rcon server can also return responses to multiple requests at once. Responses are always separated by \r\n. 
+Due to the nature of the tcp socket, the rcon server can also return responses to multiple requests at once. Responses are always separated by \r\n. 
 <br>
 The same applies for sending commands. You can send multiple commands separated by \n.
 
@@ -89,11 +89,11 @@ The basic structure is this:
 
 First there is the command part, which is the command. Then there is the arguments part, which is a list of arguments separated by spaces.
 <br>
-If an argument contains a space, use " in the start and the end of the argument.
+If an argument contains a space, use " in the start and at the end of the argument.
 <br>
-Here's a list of commands exposed to the rcon client and how to use them. Not all of these work due to bugs, or they may be disabled.
+Here's a list of commands exposed to the rcon client and how to use them. Not all of these work due to bugs, or they might be disabled.
 <br>
-The (?) symbol in the description means that the use case of the function is unknown.
+The (?) symbol in the description means that the use case of the function (command) is unknown.
 <br>
 (The arguments format below works like this ``<ArgumentName>(<Type>)``)
 <br>
@@ -107,7 +107,7 @@ The (?) symbol in the description means that the use case of the function is unk
 | DSGetFavoritesList | None | (?) Unknown | No | Unknown
 | DSClearRecentsList | None | (?) Unknown | No | Unknown
 | DSGetRecentsList | None | (?) Unknown | No | Unknown
-| DSBackupSaveGames | None | (?) Backup the servers saves | No | Unknown
+| DSBackupSaveGames | None | (?) Backup the server's saves | No | Unknown
 | DSSetBackupSaveGamesInterval | \<Seconds>(Number) | (?) Set the backup interval in seconds | No | Unknown
 | DSSetPlayerCategoryForPlayerName | \<PlayerName>(String) \<Category>(String, PlayerCategory) | Set a player's category based on the player's name. See the type definition of PlayerCategory for more details on what the Category argument can be. | Yes | Unknown
 | DSSetPlayerCategory | \<Player>(String?) \<Category>(String, PlayerCategory) \<Index>(Number?) | (?) Set a player's category based on the player object? | No | Unknown
