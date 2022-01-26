@@ -1,7 +1,11 @@
 # AstroneerRconClient
 <i><b>Version: 2.2.8</b></i>
 <br>
-A client for the Astroneer Rcon server built with Node.JS
+A client for the Astroneer RCON server built with Node.JS
+<br>
+*NOTE*: This library might no longer work with the latest RCON server versions and is outdated in Node.js's best practices.
+        This library should be mainly used as an example of how to build your own RCON client for the Astroneer Dedicated server.^
+        If you have questions, you can reach me via email `eemil@esinko.net`.
 
 # Table of contents
 ## Please take a moment to look at this list to find what you are looking for!
@@ -36,11 +40,11 @@ A client for the Astroneer Rcon server built with Node.JS
 </dl>
 
 # How-it-works
-How does rcon work in the Astroneer Dedicated server?
+How does RCON work in the Astroneer Dedicated server?
 <br>
-First to enable rcon for a server, set the ConsolePort value in the AstroServerSettings.ini in Astro/Saved/Config within the server folder.
+First to enable RCON for a server, set the ConsolePort value in the AstroServerSettings.ini in Astro/Saved/Config within the server folder.
 <br>
-It is also recommended to set ConsolePassword to a random secure password, that the rcon client will use to connect.
+It is also recommended to set ConsolePassword to a random secure password, that the RCON client will use to connect.
 
 ## What is it?
 It is simply a tcp socket server that accepts one client to connect.
@@ -77,7 +81,7 @@ Now it's important to understand a key difference between commands with response
 return a standard response JSON object. If the command "has" data, which means you're requesting some data from the server, it will contain a command specific JSON response object.
 As an example "DSListPlayers" will return a JSON object, which has a "playerInfo" array, which contains information about each known player with it's command specific structure.
 <br>
-Due to the nature of the tcp socket, the rcon server can also return responses to multiple requests at once. Responses are always separated by \r\n. 
+Due to the nature of the tcp socket, the RCON server can also return responses to multiple requests at once. Responses are always separated by \r\n. 
 <br>
 The same applies for sending commands. You can send multiple commands separated by \n.
 
@@ -91,7 +95,7 @@ First there is the command part, which is the command. Then there is the argumen
 <br>
 If an argument contains a space, use " in the start and at the end of the argument.
 <br>
-Here's a list of commands exposed to the rcon client and how to use them. Not all of these work due to bugs, or they might be disabled.
+Here's a list of commands exposed to the RCON client and how to use them. Not all of these work due to bugs, or they might be disabled.
 <br>
 The (?) symbol in the description means that the use case of the function (command) is unknown.
 <br>
@@ -131,7 +135,7 @@ The (?) symbol in the description means that the use case of the function (comma
 | DSCreativeMode | \<Boolean>(Boolean) | (?) Enable creative mode for the active save | No | Unknown
 | DSGetProperties | None | Unknown | No | Unknown
 | DSServerStatistics() | None | Get information about the server | Yes | Special: ``{"build":"<ServerVersion>","ownerName":"<ServerOwnerName>","maxInGamePlayers":<ServerPlayerLimit>,"playersInGame":<PlayersInGame>,"playersKnownToGame":<KnownPlayers>,"saveGameName":"<ActiveSave>","playerActivityTimeout":<AfkTimeout>,"secondsInGame":<SecondsPlayed>,"serverName":<ServerRegistryServerName>,"serverURL":<ServerUrl>,"averageFPS":<ServerFps/TickSpeed>,"hasServerPassword":<HasPassword>,"isEnforcingWhitelist":<HasWhitelistEnabled>,"creativeMode":<ActiveSaveIsCreative>,"isAchievementProgressionDisabled":<NoAchievements>}\r\n``
-| DSListPlayers | None | Get the known players list | Yes | Special: ``{"playerInfo":[{"playerGuid":"<PlayerGuid>","playerCategory":<PlayerCategory>,"playerName":<PlayerName>,"inGame":<PlayerConnected>,"index":<PlayerIndex>}, ...]}\r\n``
+| DSListPlayers | None | Get the known players list | Yes | Special: ``{"playerInfo":[{"playerGuid":"<PlayerGuid>","playerCategory":<PlayerCategory>,"playerName":<PlayerName>,"inGame":<PlayeRCONnected>,"index":<PlayerIndex>}, ...]}\r\n``
 | DSRenameGame | \<Oldname>(String) \<NewName>(String) | Rename a save | No | Unknown
 | DSDeleteGame | \<SaveName>(String) | Delete a save | No | Unknown
 | DSLoadGame | \<SaveName>(String) | Load a new save and set it as the active save for the server | Yes | None
@@ -154,7 +158,7 @@ You can read more about it in the <b>How-it-works</b> section above.
 # Quickstart
 As both exported classes implement the same functionality, but execute them in different ways. This quickstart applies for both, with minor modifications depending on what you need to use.
 <br>
-In short. If you are using AstroLauncher you need to create a new instance of the <b>Link</b> class, if you're not using anything that already connects to the server rcon socket use, the <b>Client</b> class.
+In short. If you are using AstroLauncher you need to create a new instance of the <b>Link</b> class, if you're not using anything that already connects to the server RCON socket use, the <b>Client</b> class.
 <br>
 In this quickstart we will be using the Client class, but you may switch it by changing the end of the first line to ``.link``, instead of ``.client``.
 
@@ -243,7 +247,7 @@ That's pretty much all there is to know about the basic usage of this library.
 Refer to the Client class section for more details on what you can do with this library!
 
 # Client-class
-The client class is where the rcon client lives. It contains all the commands you can execute against the server and it formats the data for easier usage.
+The client class is where the RCON client lives. It contains all the commands you can execute against the server and it formats the data for easier usage.
 <br>
 Such as handling dates better (as JavasScript Date objects) and building cleaner response objects.
 
@@ -256,8 +260,8 @@ In markdown:
 <dl>
     <dt><p>{ip: String, port: Number, password?: String, timeout?: Number}</p></dt>
     <dd><p>Property: ip,<br>Type: String,<br>Description: The IP-address to connect to</p></dd>
-    <dd><p>Property: port,<br>Type: Number,<br>Description: The port number the server is listening for rcon</p></dd>
-    <dd><p>Property: password,<br>Type: String,<br>Description: The rcon password, leave empty if the server does not require an rcon password</p></dd>
+    <dd><p>Property: port,<br>Type: Number,<br>Description: The port number the server is listening for RCON</p></dd>
+    <dd><p>Property: password,<br>Type: String,<br>Description: The RCON password, leave empty if the server does not require an RCON password</p></dd>
     <dd><p>Property: timeout,<br>Type: Number,<br>Description: The timeout limit in ms. If not set, will default to 15000</p></dd>
     <dd><p>Property: delivery_delay,<br>Type: Number,<br>Description: The possible delay while starting and ending a "packet". A "packet" can arrive in multiple parts This value is the amount of time to wait for the next part of the "packet". By default 90(ms).</p></dd>
 </dl>
@@ -301,7 +305,7 @@ This is the constructor, which is in this case used to configure the client and 
 
 ```
 /**
- * Create a new rcon client instance
+ * Create a new RCON client instance
  * @param {ClientOptions} options The client options
 */
 constructor(options){...}
@@ -568,7 +572,7 @@ This is the second class exported by the library. It implements the same functio
 <br>The command reference for this class is the same instead the constructor is a bit different.
 Instead of taking the server port, ip and console password. It want's the ip, port and password of your AstroLauncher web-panel.
 <br>
-Please note, that some features of rcon that are yet to be implemented in AstroLauncher's api, will of course not be usable.
+Please note, that some features of RCON that are yet to be implemented in AstroLauncher's api, will of course not be usable.
 
 # Errors-and-bugs
 Error handling is very important. In this library all errors are handled with the "error" event. If this event has no listeners, the error will be thrown in to global scope.
